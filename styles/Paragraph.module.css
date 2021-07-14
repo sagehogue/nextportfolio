@@ -1,0 +1,16 @@
+.paragraph {
+  font-size: 32px;
+  font-family: "Miriam Libre", sans-serif;
+  line-height: 54px;
+  letter-spacing: 0px;
+  color: var(--color-offwhite);
+  max-width: 25vw;
+}
+
+.marginRight {
+  margin-right: auto;
+}
+
+.small {
+  max-width: 20vw;
+}

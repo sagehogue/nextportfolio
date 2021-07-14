@@ -1,0 +1,4 @@
+.wrapper {
+  padding: 277px 0;
+  padding: var(--desktop-page-padding);
+}

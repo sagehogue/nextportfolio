@@ -1,0 +1,12 @@
+.Nav {
+  padding: 0.75rem 0;
+  font-family: "Miriam Libre", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  width: 32.5vw;
+}
+
+.Link {
+  color: var(--color-offwhite);
+  font-size: 16px;
+}
