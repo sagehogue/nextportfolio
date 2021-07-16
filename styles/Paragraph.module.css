@@ -2,9 +2,10 @@
   font-size: 32px;
   font-family: "Miriam Libre", sans-serif;
   line-height: 54px;
-  letter-spacing: 0px;
+  letter-spacing: 2px;
   color: var(--color-offwhite);
-  max-width: 25vw;
+  max-width: 30vw;
+  margin: 0;
 }
 
 .marginRight {
@@ -12,5 +13,5 @@
 }
 
 .small {
-  max-width: 20vw;
+  max-width: 25vw;
 }

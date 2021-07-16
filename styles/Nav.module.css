@@ -3,10 +3,16 @@
   font-family: "Miriam Libre", sans-serif;
   display: flex;
   justify-content: space-between;
-  width: 32.5vw;
+  /* width: 32.5vw; */
+  width: 25vw;
 }
 
-.Link {
-  color: var(--color-offwhite);
+.NavLink {
+  transition: all 0.2s;
   font-size: 16px;
+  color: var(--color-offwhite);
+}
+
+.Active {
+  color: var(--color-2);
 }
