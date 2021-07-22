@@ -5,6 +5,7 @@
   justify-content: space-between;
   /* width: 32.5vw; */
   width: 25vw;
+  z-index: 5;
 }
 
 .NavLink {
@@ -13,6 +14,58 @@
   color: var(--color-offwhite);
 }
 
+.NavLink:hover {
+  box-shadow: 0px 0px 4px 3px var(--color-5);
+  background-color: var(--color-5);
+}
+
+.Hamburger {
+  cursor: pointer;
+}
+
+.topLine.BurgerLineOpen {
+  transform: translateY(0.5rem) rotate(45deg);
+}
+.bottomLine.BurgerLineOpen {
+  transform: translateY(-0.5rem) rotate(-45deg);
+}
+
+.HamburgerLine.BurgerLineOpen {
+  background-color: var(--color-6);
+}
+
+.HamburgerLine {
+  transition: all 0.2s;
+  width: 3rem;
+  height: 5px;
+  margin-bottom: 4px;
+  background-color: black;
+}
+
+.MobileNav {
+  /* display: none; */
+}
+
+.MobileNavMenu {
+  transition: all 0.4s;
+  background-color: var(--color-5);
+  width: 75vw;
+}
+
 .Active {
   color: var(--color-2);
+}
+
+.Invisible {
+  opacity: 0;
+}
+
+@media (max-width: 900) {
+  .Nav.DesktopNav {
+    display: none;
+  }
+  .MobileNavMenu {
+    display: flex;
+    justify-content: space-between;
+  }
 }

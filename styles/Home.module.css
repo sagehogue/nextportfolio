@@ -42,5 +42,9 @@
 .spacer {
   margin-top: 2rem;
 }
+
+.main {
+  z-index: 3;
+}
 @media (max-width: 600px) {
 }

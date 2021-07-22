@@ -9,8 +9,26 @@
   max-height: 12rem; */
   border: none;
   padding: 2rem 5rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+.button:hover {
+  box-shadow: 0px 0px 10px 5px var(--color-2);
 }
 .cta {
   background-color: var(--color-2);
   color: var(--color-black);
+}
+
+.cta:hover {
+  box-shadow: 0px 0px 10px 5px var(--color-5);
+}
+
+.anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
 }
