@@ -62,6 +62,68 @@ const ImageContainer = styled.div`
   }
 `;
 export default function Home() {
+  let pageViewToLoad;
+  if (typeof window !== "undefined") {
+    // desktop view
+    if (window.innerWidth > 775) {
+      let desktopView = (
+        <div className={styles.orientContent}>
+          <div className={styles.orientText}>
+            <Paragraph index>
+              Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
+              <Highlight>freelancer</Highlight>
+              <br /> in the beautiful Rose City. I<br /> work with small
+              businesses to <br />
+              help them go local -> global.
+            </Paragraph>
+            <div className={styles.spacer} />
+            <Paragraph small index>
+              <Highlight>Databases</Highlight>,<Highlight>web design</Highlight>
+              , <br />
+              <Highlight>development</Highlight>,<Highlight>hosting</Highlight>,{" "}
+              <br />& more. I do it all.{" "}
+            </Paragraph>
+          </div>
+          {/* </div> */}
+          <div className={styles.buttonGroup}>
+            <Button cta marginRight link="/projects">
+              My Work
+            </Button>
+
+            <Button link="/services">Services</Button>
+          </div>
+        </div>
+      );
+      pageViewToLoad = desktopView;
+    } else {
+      let mobileView = (
+        <>
+          <div className={styles.orientContent}>
+            <Paragraph index>
+              Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
+              <Highlight>freelancer</Highlight>
+              <br /> in the beautiful Rose City. I<br /> work with small
+              businesses to <br />
+              help them go local -> global.
+            </Paragraph>
+
+            <Button cta marginRight link="/projects">
+              My Work
+            </Button>
+
+            <Paragraph small index>
+              <Highlight>Databases</Highlight>,<Highlight>web design</Highlight>
+              , <br />
+              <Highlight>development</Highlight>,<Highlight>hosting</Highlight>,{" "}
+              <br />& more. I do it all.{" "}
+            </Paragraph>
+            <Button link="/services">Services</Button>
+          </div>
+        </>
+      );
+      pageViewToLoad = mobileView;
+    }
+  }
   return (
     <Page>
       <Head>
@@ -77,34 +139,7 @@ export default function Home() {
           <ImageContainer>
             <Image src={Cityscape} />
           </ImageContainer>
-
-          {/* <div className={styles.marginTop}> */}
-          <div className={styles.orientContent}>
-            <div className={styles.orientText}>
-              <Paragraph index>
-                Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
-                <Highlight>freelancer</Highlight>
-                <br /> in the beautiful Rose City. I<br /> work with small
-                businesses to <br />
-                help them go local -> global.
-              </Paragraph>
-              <div className={styles.spacer} />
-              <Paragraph small index>
-                <Highlight>Databases</Highlight>,
-                <Highlight>web design</Highlight>, <br />
-                <Highlight>development</Highlight>,
-                <Highlight>hosting</Highlight>, <br />& more. I do it all.{" "}
-              </Paragraph>
-            </div>
-            {/* </div> */}
-            <div className={styles.buttonGroup}>
-              <Button cta marginRight link="/projects">
-                My Work
-              </Button>
-
-              <Button link="/services">Services</Button>
-            </div>
-          </div>
+          {pageViewToLoad}
         </main>
       </Wrapper>
 

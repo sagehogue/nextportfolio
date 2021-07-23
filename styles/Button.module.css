@@ -60,3 +60,11 @@
     margin-right: 1rem;
   }
 }
+
+@media screen and (max-width: 775px) {
+  .button {
+    max-width: 25vw;
+    padding: 1.25rem 2.5rem;
+    font-size: 16px;
+  }
+}
