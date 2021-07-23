@@ -35,3 +35,24 @@
     padding: var(--desktop-page-padding-900);
   }
 }
+
+@media screen and (max-width: 775px) {
+  .wrapper {
+    /* padding: 0 200px; */
+    padding: var(--mobile-page-padding-775);
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .wrapper {
+    /* padding: 0 200px; */
+    padding: var(--mobile-page-padding-650);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .wrapper {
+    /* padding: 0 200px; */
+    padding: var(--mobile-page-padding-500);
+  }
+}

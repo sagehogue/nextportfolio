@@ -31,6 +31,9 @@ a {
   --desktop-page-padding-1150: 0 95px;
   --desktop-page-padding-1050: 0 55px;
   --desktop-page-padding-900: 0 1rem;
+  --desktop-page-padding-775: 0 5rem;
+  --desktop-page-padding-650: 0 3rem;
+  --desktop-page-padding-500: 0 1rem;
   --mobile-page-padding: 0 28px;
   --color-offwhite: #dbdbdb;
   --color-white: #fff;

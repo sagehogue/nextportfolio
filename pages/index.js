@@ -60,22 +60,44 @@ const ImageContainer = styled.div`
     top: -11rem;
     right: -19.5rem;
   }
+  @media screen and (max-width: 775px) {
+    transform: scale(45%);
+    top: -11rem;
+    right: -17rem;
+  }
+  @media screen and (max-width: 600px) {
+    transform: scale(50%);
+    top: -9rem;
+    right: -13.5rem;
+  }
+`;
+
+const Spacer = styled.div`
+  margin-top: 1rem;
+`;
+
+const Frame = styled.div`
+  margin: 0 auto 0 auto;
 `;
 export default function Home() {
   let pageViewToLoad;
   if (typeof window !== "undefined") {
+    let paragraph1 = (
+      <Paragraph index>
+        Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
+        <Highlight>freelancer</Highlight>
+        <br /> in the beautiful Rose City. I<br /> work with small businesses to{" "}
+        <br />
+        help them go local -> global.
+      </Paragraph>
+    );
+
     // desktop view
     if (window.innerWidth > 775) {
       let desktopView = (
         <div className={styles.orientContent}>
           <div className={styles.orientText}>
-            <Paragraph index>
-              Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
-              <Highlight>freelancer</Highlight>
-              <br /> in the beautiful Rose City. I<br /> work with small
-              businesses to <br />
-              help them go local -> global.
-            </Paragraph>
+            {paragraph1}
             <div className={styles.spacer} />
             <Paragraph small index>
               <Highlight>Databases</Highlight>,<Highlight>web design</Highlight>
@@ -99,25 +121,37 @@ export default function Home() {
       let mobileView = (
         <>
           <div className={styles.orientContent}>
-            <Paragraph index>
+            {/* <Paragraph index>
               Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
               <Highlight>freelancer</Highlight>
               <br /> in the beautiful Rose City. I<br /> work with small
               businesses to <br />
               help them go local -> global.
-            </Paragraph>
+            </Paragraph> */}
+            <Frame>{paragraph1}</Frame>
 
-            <Button cta marginRight link="/projects">
-              My Work
-            </Button>
-
-            <Paragraph small index>
-              <Highlight>Databases</Highlight>,<Highlight>web design</Highlight>
-              , <br />
-              <Highlight>development</Highlight>,<Highlight>hosting</Highlight>,{" "}
-              <br />& more. I do it all.{" "}
-            </Paragraph>
-            <Button link="/services">Services</Button>
+            <Spacer />
+            <Frame>
+              <Button cta marginRight link="/projects">
+                My Work
+              </Button>
+            </Frame>
+            <Spacer />
+            <Frame>
+              <Paragraph small index>
+                <Highlight>Databases</Highlight>,
+                <Highlight>web design,</Highlight>
+                <br />
+                <Highlight>development</Highlight>,
+                <Highlight>hosting</Highlight>
+                , & more.
+                <br /> I do it all.{" "}
+              </Paragraph>
+            </Frame>
+            <Spacer />
+            <Frame>
+              <Button link="/services">Services</Button>
+            </Frame>
           </div>
         </>
       );

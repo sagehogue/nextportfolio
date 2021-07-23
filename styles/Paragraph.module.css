@@ -53,6 +53,42 @@
 @media screen and (max-width: 900px) {
   .paragraph.index {
     max-width: 51.75vw;
-    line-height: 42px;
+    line-height: 36px;
+  }
+}
+@media screen and (max-width: 775px) {
+  .paragraph.index {
+    max-width: 90vw;
+    font-size: 26px;
+    line-height: 41px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .paragraph.index {
+    max-width: 95vw;
+    font-size: 24px;
+    line-height: 36px;
+  }
+}
+@media screen and (max-width: 450px) {
+  .paragraph.index {
+    max-width: 95vw;
+    font-size: 22px;
+    line-height: 33px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .paragraph.index {
+    max-width: 95vw;
+    font-size: 20px;
+    line-height: 30px;
+  }
+}
+@media screen and (max-width: 400px) {
+  .paragraph.index {
+    max-width: 95vw;
+    font-size: 18px;
+    line-height: 29px;
   }
 }
