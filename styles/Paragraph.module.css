@@ -6,6 +6,7 @@
   color: var(--color-offwhite);
   max-width: 30vw;
   margin: 0;
+  min-width: 30vw;
 }
 
 .marginRight {
@@ -14,4 +15,44 @@
 
 .small {
   max-width: 25vw;
+}
+
+.index {
+}
+@media screen and (max-width: 1800px) {
+  .paragraph.index {
+    line-height: 48px;
+    font-size: 28px;
+    /* max-width: 35vw; */
+  }
+}
+@media screen and (max-width: 1600px) {
+  .paragraph.index {
+    line-height: 39px;
+    font-size: 26px;
+  }
+}
+@media screen and (max-width: 1500px) {
+  .paragraph.index {
+    /* line-height: 36px;
+    font-size: 24px; */
+    max-width: 40vw;
+  }
+}
+@media screen and (max-width: 1300px) {
+  .paragraph.index {
+    line-height: 36px;
+    font-size: 22px;
+  }
+}
+@media screen and (max-width: 1050px) {
+  .paragraph.index {
+    max-width: 45vw;
+  }
+}
+@media screen and (max-width: 900px) {
+  .paragraph.index {
+    max-width: 51.75vw;
+    line-height: 42px;
+  }
 }

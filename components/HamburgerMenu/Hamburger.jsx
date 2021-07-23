@@ -6,7 +6,7 @@ import NavLink from "../elements/NavLink";
 const HamburgerStyle = styled.div`
 position: absolute;
 z-index: 2;
-right: 1.5rem;
+left: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,7 +41,7 @@ const HamburgerDiv = styled.div`
 const Tray = styled.nav`
   position: absolute;
   top: 4.5rem;
-  right: 0;
+  left: 0;
   z-index: 2;
   transition: all 0.2s;
   text-align: center;
@@ -53,7 +53,7 @@ const Tray = styled.nav`
   min-width: 8.5rem;
   max-width: 15rem;
   transform: ${(props) =>
-    props.isOpen ? "translateX(0)" : "translateX(10rem)"};
+    props.isOpen ? "translateX(0)" : "translateX(-10rem)"};
 `;
 
 export default function Hamburger({ location }) {
@@ -86,19 +86,19 @@ export default function Hamburger({ location }) {
         ></HamburgerDiv>
       </HamburgerStyle>
       <Tray isOpen={menuIsOpen}>
-        <NavLink href="/" location={location}>
+        <NavLink href="/" location={location} hamburger>
           Home
         </NavLink>
-        <NavLink href="/about" location={location}>
+        <NavLink href="/about" location={location} hamburger>
           About
         </NavLink>
-        <NavLink href="/projects" location={location}>
+        <NavLink href="/projects" location={location} hamburger>
           Projects
         </NavLink>
-        <NavLink href="/services" location={location}>
+        <NavLink href="/services" location={location} hamburger>
           Services
         </NavLink>
-        <NavLink href="/contact" location={location}>
+        <NavLink href="/contact" location={location} hamburger>
           Contact
         </NavLink>
       </Tray>

@@ -20,6 +20,7 @@ const NavStyle = styled.a`
     background-color: ${(props) =>
       props.active ? "var(--color-3)" : "transparent"};
     content: " ";
+    transform: ${(props) => (props.hamburger ? "translateX(.95rem)" : "")};
   }
   &:hover {
     color: var(--color-2);
@@ -27,9 +28,47 @@ const NavStyle = styled.a`
   &:hover:active {
     background-color: var(--color-1);
   }
+  @media screen and (max-width: 1650px) {
+    font-size: 14px;
+    &::after {
+      width: 2.9rem;
+    }
+  }
+  @media screen and (max-width: 1500px) {
+    margin-right: 1rem;
+  }
+  @media screen and (max-width: 1400px) {
+    font-size: 12px;
+    margin-right: 1.75rem;
+    &::after {
+      width: 2.6rem;
+      height: 4px;
+    }
+  }
+  @media screen and (max-width: 1300px) {
+    font-size: 10px;
+    margin-right: 2.5rem;
+    &::after {
+      width: 2.25rem;
+      height: 3px;
+    }
+  }
+  @media screen and (max-width: 1050px) {
+    font-size: 10px;
+    margin-right: 1.5rem;
+    &::after {
+    width:${(props) => (props.hamburger ? "2.55rem" : "2.25rem")};
+    }
 `;
 
-export default function NavLink({ href, location, children, noPadding, noBG }) {
+export default function NavLink({
+  href,
+  location,
+  children,
+  noPadding,
+  noBG,
+  hamburger = false,
+}) {
   //   const router = useRouter();
   console.log(href === location);
   let classes = [styles.NavLink];
@@ -44,6 +83,7 @@ export default function NavLink({ href, location, children, noPadding, noBG }) {
         location={location}
         noPadding={noPadding}
         noBG={noBG}
+        hamburger={hamburger}
       >
         {children}
       </NavStyle>

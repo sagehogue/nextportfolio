@@ -4,7 +4,6 @@
   font-weight: 700;
   /* padding: 1.75rem 3.5rem; */
   font-size: 18px;
-  margin-right: 2rem;
   /* max-width: 12rem;
   max-height: 12rem; */
   border: none;
@@ -25,10 +24,39 @@
   box-shadow: 0px 0px 10px 5px var(--color-5);
 }
 
+.marginRight {
+  margin-right: 2rem;
+}
+
 .anchor {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
+}
+
+@media screen and (max-width: 1600px) {
+  .button {
+    padding: 1.75rem 4rem;
+  }
+}
+
+@media screen and (max-width: 1050px) {
+  .button {
+    padding: 1.75rem 3.5rem;
+    font-size: 16px;
+  }
+  .marginRight {
+    margin-right: 1.5rem;
+  }
+}
+@media screen and (max-width: 900px) {
+  .button {
+    padding: 1.25rem 2.5rem;
+    font-size: 16px;
+  }
+  .marginRight {
+    margin-right: 1rem;
+  }
 }

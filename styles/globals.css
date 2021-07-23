@@ -16,7 +16,7 @@ a {
 * {
   box-sizing: border-box;
 }
-
+/* breakpoints: 1800, 1600, 1500, 1300, 1150, 1050, 900, */
 :root {
   --color-1: #4f205b;
   --color-2: #f2ba8d;
@@ -26,6 +26,11 @@ a {
   --color-6: #9c3306;
   --desktop-page-padding: 0 277px;
   --desktop-page-width: 1366px;
+  --desktop-page-padding-1800: 0 225px;
+  --desktop-page-padding-1500: 0 145px;
+  --desktop-page-padding-1150: 0 95px;
+  --desktop-page-padding-1050: 0 55px;
+  --desktop-page-padding-900: 0 1rem;
   --mobile-page-padding: 0 28px;
   --color-offwhite: #dbdbdb;
   --color-white: #fff;

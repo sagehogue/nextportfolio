@@ -46,5 +46,52 @@
 .main {
   z-index: 3;
 }
-@media (max-width: 600px) {
+@media (max-width: 1800px) {
+  .buttonGroup {
+    margin-right: 10rem;
+  }
+}
+
+@media screen and (max-width: 1650px) {
+  .buttonGroup {
+    margin-right: 4.7rem;
+  }
+}
+@media screen and (max-width: 1600px) {
+  .buttonGroup {
+    margin-right: 4.7rem;
+  }
+  .orientContent {
+    margin-top: 12.5rem;
+  }
+}
+@media screen and (max-width: 1300px) {
+  .buttonGroup {
+    margin-right: -1.15rem;
+  }
+  .orientContent {
+    margin-top: 13rem;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .orientContent {
+    margin-top: 13rem;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .buttonGroup {
+    margin-right: 2rem;
+  }
+}
+
+@media screen and (max-width: 775px) {
+  .buttonGroup {
+    margin-right: 0rem;
+  }
+  .orientContent {
+    justify-content: space-around;
+    flex-direction: column;
+    min-height: 60vh;
+  }
 }
