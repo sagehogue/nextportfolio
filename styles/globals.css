@@ -24,7 +24,8 @@ a {
   --color-4: #eadaeb;
   --color-5: #7e4c8b;
   --color-6: #9c3306;
-  --desktop-page-padding: 0 277px;
+  /* formerly 0 277px */
+  --desktop-page-padding: 0 305px;
   --desktop-page-width: 1366px;
   --desktop-page-padding-1800: 0 225px;
   --desktop-page-padding-1500: 0 145px;

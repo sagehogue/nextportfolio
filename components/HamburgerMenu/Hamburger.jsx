@@ -31,6 +31,7 @@ left: 1.5rem;
 const HamburgerDiv = styled.div`
   width: 4.5rem;
   height: 0.45rem;
+  border-radius: ${(props) => (props.isOpen ? "20px" : "5px")};
   background-color: var(--color-text-i);
   margin-top: 0.3rem;
   transition: all 0.2s, opacity 0.1s;
@@ -50,10 +51,11 @@ const Tray = styled.nav`
   min-height: 8.75rem;
   display: flex;
   flex-direction: column;
-  min-width: 8.5rem;
+  min-width: 9rem;
   max-width: 15rem;
+
   transform: ${(props) =>
-    props.isOpen ? "translateX(0)" : "translateX(-10rem)"};
+    props.isOpen ? "translateX(-0.25rem)" : "translateX(-10rem)"};
 `;
 
 export default function Hamburger({ location }) {

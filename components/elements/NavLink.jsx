@@ -55,9 +55,15 @@ const NavStyle = styled.a`
   }
   @media screen and (max-width: 1050px) {
     font-size: 10px;
-    margin-right: 1.5rem;
+    margin-right: 1.25rem;
     &::after {
     width:${(props) => (props.hamburger ? "2.55rem" : "2.25rem")};
+    }
+    @media screen and (max-width: 900px) {
+      font-size: 1.35rem;
+      &::after {
+      width:${(props) => (props.hamburger ? "4.65rem" : "2.25rem")};
+      }
     }
 `;
 

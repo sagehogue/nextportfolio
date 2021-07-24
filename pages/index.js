@@ -23,6 +23,7 @@ const ImageContainer = styled.div`
   position: absolute;
   top: 0;
   right: -2.5rem;
+  overflow: hidden;
   z-index: 1;
   @media screen and (max-width: 1650px) {
     transform: scale(90%);
@@ -63,13 +64,22 @@ const ImageContainer = styled.div`
   @media screen and (max-width: 775px) {
     transform: scale(45%);
     top: -11rem;
-    right: -17rem;
+    right: -18rem;
   }
   @media screen and (max-width: 600px) {
     transform: scale(50%);
     top: -9rem;
     right: -13.5rem;
   }
+  @media screen and (max-width: 500px) {
+    transform: scale(60%);
+    top: -6rem;
+    right: -9rem;
+  }
+`;
+
+const PageContent = styled.main`
+  overflow: hidden;
 `;
 
 const Spacer = styled.div`
@@ -78,6 +88,12 @@ const Spacer = styled.div`
 
 const Frame = styled.div`
   margin: 0 auto 0 auto;
+`;
+
+const Columnizer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 55vh;
 `;
 export default function Home() {
   let pageViewToLoad;
@@ -93,17 +109,18 @@ export default function Home() {
     );
 
     // desktop view
-    if (window.innerWidth > 775) {
+    if (window.innerWidth > 900) {
       let desktopView = (
         <div className={styles.orientContent}>
           <div className={styles.orientText}>
             {paragraph1}
             <div className={styles.spacer} />
             <Paragraph small index>
-              <Highlight>Databases</Highlight>,<Highlight>web design</Highlight>
+              <Highlight>Databases </Highlight>,
+              <Highlight>web design </Highlight>
               , <br />
-              <Highlight>development</Highlight>,<Highlight>hosting</Highlight>,{" "}
-              <br />& more. I do it all.{" "}
+              <Highlight>development </Highlight>,
+              <Highlight>hosting </Highlight>, <br />& more. I do it all.
             </Paragraph>
           </div>
           {/* </div> */}
@@ -121,36 +138,35 @@ export default function Home() {
       let mobileView = (
         <>
           <div className={styles.orientContent}>
-            {/* <Paragraph index>
-              Hi, <Highlight>Sage</Highlight> here. I'm a{" "}
-              <Highlight>freelancer</Highlight>
-              <br /> in the beautiful Rose City. I<br /> work with small
-              businesses to <br />
-              help them go local -> global.
-            </Paragraph> */}
-            <Frame>{paragraph1}</Frame>
+            <Frame>
+              <Columnizer>
+                <Frame>{paragraph1}</Frame>
+                <Spacer />
+                <Frame>
+                  <Button cta marginRight link="/projects">
+                    My Work
+                  </Button>
+                </Frame>
 
-            <Spacer />
-            <Frame>
-              <Button cta marginRight link="/projects">
-                My Work
-              </Button>
-            </Frame>
-            <Spacer />
-            <Frame>
-              <Paragraph small index>
-                <Highlight>Databases</Highlight>,
-                <Highlight>web design,</Highlight>
-                <br />
-                <Highlight>development</Highlight>,
-                <Highlight>hosting</Highlight>
-                , & more.
-                <br /> I do it all.{" "}
-              </Paragraph>
-            </Frame>
-            <Spacer />
-            <Frame>
-              <Button link="/services">Services</Button>
+                <Spacer />
+
+                <Frame>
+                  <Paragraph small index>
+                    <Highlight>Databases</Highlight>,
+                    <Highlight>web design,</Highlight>
+                    <br />
+                    <Highlight>development</Highlight>,
+                    <Highlight>hosting</Highlight>
+                    , & more.
+                    <br /> I do it all.{" "}
+                  </Paragraph>
+                </Frame>
+
+                <Spacer />
+                <Frame>
+                  <Button link="/services">Services</Button>
+                </Frame>
+              </Columnizer>
             </Frame>
           </div>
         </>
@@ -169,12 +185,12 @@ export default function Home() {
       </Head>
       <Wrapper>
         <Nav location="/" />
-        <main className={styles.main}>
+        <PageContent>
           <ImageContainer>
             <Image src={Cityscape} />
           </ImageContainer>
           {pageViewToLoad}
-        </main>
+        </PageContent>
       </Wrapper>
 
       {/* <footer className={styles.footer}></footer> */}
