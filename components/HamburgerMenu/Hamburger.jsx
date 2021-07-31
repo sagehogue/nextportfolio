@@ -6,7 +6,7 @@ import NavLink from "../elements/NavLink";
 const HamburgerStyle = styled.div`
 position: absolute;
 z-index: 2;
-left: 1.5rem;
+left: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -35,11 +35,12 @@ const PageContentHeight = styled.div`
   }
 
   @media screen and (max-width: 900px) and (min-height: 1000px) {
-    margin-top: 3.5rem;
+    margin-top: 4rem;
   }
 
   @media screen and (max-width: 900px) and (max-height: 1000px) {
-    margin-top: 3rem;
+    margin: 4rem auto 0 auto;
+    display: block;
   }
 `;
 
@@ -92,7 +93,7 @@ export default function About() {
       </Wrapper>
       <Wrapper>
         <PageContentHeight>
-          <Frame bringCenter verticalCenter width={textWidth}>
+          <Frame bringCenter horizontalCenter verticalCenter width={textWidth}>
             <Headline>Who is he?</Headline>
             <Paragraph width={textWidth}>
               I got my start in 2018 at PDXCodeGuild, a Portland full-stack

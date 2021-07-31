@@ -16,6 +16,16 @@ a {
 * {
   box-sizing: border-box;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+label {
+  color: var(--color-offwhite);
+}
 /* breakpoints: 1800, 1600, 1500, 1300, 1150, 1050, 900, */
 :root {
   --color-1: #4f205b;
@@ -24,6 +34,7 @@ a {
   --color-4: #eadaeb;
   --color-5: #7e4c8b;
   --color-6: #9c3306;
+  --color-7: #91649c;
   /* formerly 0 277px */
   --desktop-page-padding: 0 305px;
   --desktop-page-width: 1366px;
