@@ -10,7 +10,7 @@ const FrameStyle = styled.div`
       : props.verticalCenter
       ? " auto 0 auto 0"
       : ""};
-  // margin: ${(props) => (props.verticalCenter ? "auto" : "0 auto 0 auto")};
+  margin-top: ${(props) => (props.marginTop ? "4rem" : "0")};
   @media screen and (max-width: 900px) {
     max-width: ${(props) => (props.bringCenter ? "85vw" : "100vw")};
     
@@ -43,6 +43,7 @@ export default function Frame({
   verticalCenter,
   horizontalCenter,
   width,
+  marginTop = false,
 }) {
   return (
     <FrameStyle
@@ -50,6 +51,7 @@ export default function Frame({
       bringCenter={bringCenter}
       horizontalCenter={horizontalCenter}
       width={width}
+      marginTop={marginTop}
     >
       {children}
     </FrameStyle>

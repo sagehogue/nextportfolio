@@ -11,9 +11,6 @@ const Headline = styled.h1`
   margin: 0;
 `;
 
-const SpaceFromTop = styled.div`
-  margin-top: 4rem;
-`;
 export default function Contact() {
   return (
     <Page>
@@ -25,14 +22,14 @@ export default function Contact() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Nav location="/contact" />
       <Wrapper>
-        <Nav location="/contact" />
-        <SpaceFromTop />
-
-        <Frame horizontalCenter>
+        {/* <SpaceFromTop> */}
+        <Frame horizontalCenter marginTop>
           <Headline>Let's get acquainted.</Headline>
           <ContactForm />
         </Frame>
+        {/* </SpaceFromTop> */}
       </Wrapper>
     </Page>
   );

@@ -76,7 +76,6 @@ export default function NavLink({
   hamburger = false,
 }) {
   //   const router = useRouter();
-  console.log(href === location);
   let classes = [styles.NavLink];
   if (href === location) {
     classes.push(styles.Active);

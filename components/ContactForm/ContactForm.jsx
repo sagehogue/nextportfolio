@@ -3,15 +3,14 @@ import styled from "styled-components";
 
 const Form = styled.form`
   min-height: 75vh;
-  background-color: var(--color-5);
+  background-color: var(--color-8);
   padding: 0.75rem;
-  & input {
-  }
+
   & input,
   & textarea {
-    background-color: var(--color-7);
-    border: none;
+    background-color: var(--color-5);
     padding: 5px;
+    font-size: 0.85rem;
   }
   & br {
     margin-bottom: 3px;
@@ -39,16 +38,30 @@ const SubmitButton = styled.input`
   margin: 1.5rem auto 0 auto;
   padding: 0.75rem !important;
   font-weight: 700;
+  border: none;
 `;
 
 const FormInput = styled.input`
   width: 100%;
+  transition: all 0.2s;
+  border: 3px transparent solid;
+  &:focus {
+    outline: none;
+    border-bottom: 3px var(--color-7) solid;
+    &::after {
+    }
+  }
 `;
 
 const TextArea = styled.textarea`
   height: 25vh;
   width: 100%;
-  //   margin: 0 auto 0 auto;
+  transition: all 0.2s;
+  border: 3px transparent solid;
+  &:focus {
+    outline: none;
+    border-bottom: 3px var(--color-7) solid;
+  }
 `;
 
 export default function ContactForm() {
@@ -90,6 +103,7 @@ export default function ContactForm() {
           <br />
           <FormInput
             type="text"
+            required
             value={name}
             onChange={(e) => handleFormChange(e, "name")}
           ></FormInput>
@@ -99,6 +113,7 @@ export default function ContactForm() {
           <br />
           <FormInput
             type="text"
+            required
             value={subject}
             onChange={(e) => handleFormChange(e, "subject")}
           ></FormInput>
@@ -108,6 +123,7 @@ export default function ContactForm() {
           <br />
           <FormInput
             type="text"
+            required
             value={email}
             onChange={(e) => handleFormChange(e, "email")}
           ></FormInput>
@@ -122,6 +138,7 @@ export default function ContactForm() {
         </FormEntry>
         <SubmitButton
           type="submit"
+          required
           value="Submit"
           onSubmit={handleSubmit}
         ></SubmitButton>
