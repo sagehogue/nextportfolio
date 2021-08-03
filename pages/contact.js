@@ -8,7 +8,12 @@ import styled from "styled-components";
 import ContactForm from "../components/ContactForm/ContactForm";
 import Frame from "../components/elements/Helpers/Frame";
 const Headline = styled.h1`
-  margin: 0;
+  margin: 0 auto 0 auto;
+  max-width: 95vw;
+  margin-top: 5rem;
+  @media screen and (max-width: 750px) {
+    font-size: 1.75rem;
+  }
 `;
 
 export default function Contact() {
@@ -22,14 +27,11 @@ export default function Contact() {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Nav location="/contact" />
       <Wrapper>
-        {/* <SpaceFromTop> */}
-        <Frame horizontalCenter marginTop>
-          <Headline>Let's get acquainted.</Headline>
-          <ContactForm />
-        </Frame>
-        {/* </SpaceFromTop> */}
+        <Nav location="/contact" />
+        {/* <SpaceFromTop /> */}
+        <Headline>Let's get acquainted.</Headline>
+        <ContactForm />
       </Wrapper>
     </Page>
   );

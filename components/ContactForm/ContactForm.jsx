@@ -3,8 +3,10 @@ import styled from "styled-components";
 
 const Form = styled.form`
   min-height: 75vh;
+  max-width: 95vw;
+  margin: 0 auto 0 auto;
   background-color: var(--color-8);
-  padding: 0.75rem;
+  padding: 1rem;
 
   & input,
   & textarea {
@@ -15,14 +17,21 @@ const Form = styled.form`
   & br {
     margin-bottom: 3px;
   }
+
+  @media screen and (min-width: 700px) {
+    min-height: 65vh;
+  }
+  @media screen and (min-width: 1400px) {
+    min-height: 62vh;
+  }
 `;
 
 const FormContentWrapper = styled.div`
+  width: 100%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 85%;
-  margin-bottom: auto;
 `;
 
 const FormEntry = styled.label`
@@ -35,10 +44,20 @@ const FormEntry = styled.label`
 const SubmitButton = styled.input`
   background-color: var(--color-2) !important;
   width: 45%;
-  margin: 1.5rem auto 0 auto;
+  margin: auto auto auto auto;
   padding: 0.75rem !important;
   font-weight: 700;
   border: none;
+  color: var(--color-black);
+  @media screen and (min-width: 500px) {
+    width: 25%;
+  }
+  @media screen and (min-width: 1000px) {
+    width: 20%;
+  }
+  @media screen and (min-width: 1600px) {
+    width: 15%;
+  }
 `;
 
 const FormInput = styled.input`
