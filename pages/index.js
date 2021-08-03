@@ -125,7 +125,13 @@ export default function Home() {
           </div>
           {/* </div> */}
           <div className={styles.buttonGroup}>
-            <Button cta marginRight link="/projects">
+            <Button
+              cta
+              marginRight={"2rem"}
+              bgColor={"var(--color-2)"}
+              color={"var(--color-black)"}
+              link="/projects"
+            >
               My Work
             </Button>
 
