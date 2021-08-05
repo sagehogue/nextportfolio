@@ -149,7 +149,12 @@ export default function Home() {
                 <Frame>{paragraph1}</Frame>
                 <Spacer />
                 <Frame>
-                  <Button cta marginRight link="/projects">
+                  <Button
+                    cta
+                    bgColor={"var(--color-2)"}
+                    color={"var(--color-black)"}
+                    link="/projects"
+                  >
                     My Work
                   </Button>
                 </Frame>

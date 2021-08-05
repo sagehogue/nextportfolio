@@ -11,7 +11,6 @@ left: 1rem;
   flex-direction: column;
   align-items: center;
   justify-content; center;
-  min-height: 5rem;
   min-width: 5rem;
   cursor: pointer;
   transition: all 0.2s;

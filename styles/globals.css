@@ -17,6 +17,12 @@ a {
   box-sizing: border-box;
 }
 
+ul,
+ol {
+  padding: 0;
+  margin: 0;
+}
+
 h1,
 h2,
 h3,
@@ -47,13 +53,14 @@ input {
   --desktop-page-padding-1500: 0 145px;
   --desktop-page-padding-1150: 0 95px;
   --desktop-page-padding-1050: 0 55px;
-  --desktop-page-padding-900: 0 1rem;
-  --desktop-page-padding-775: 0 5rem;
-  --desktop-page-padding-650: 0 3rem;
-  --desktop-page-padding-500: 0 1rem;
+  --mobile-page-padding-900: 0 1rem;
+  --mobile-page-padding-775: 0 3.5rem;
+  --mobile-page-padding-650: 0 3rem;
+  --mobile-page-padding-500: 0 1.2rem;
   --mobile-page-padding: 0 28px;
   --color-offwhite: #dbdbdb;
   --color-white: #fff;
   --color-black: #161916;
-  --color-highlight: #97469b;
+  --color-highlight: rgba(151, 70, 155, 0.58);
+  --font-body-mobile: 1.2rem;
 }

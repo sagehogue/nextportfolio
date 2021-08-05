@@ -15,6 +15,7 @@ import Ghosty from "../public/Ghosty-surprise.svg";
 
 const ContentHeading = styled.h1`
   font-size: 1.75rem;
+  margin-top: 4.25rem;
 
   @media screen and (min-width: 1400px) {
     font-size: 2.75rem;
@@ -22,36 +23,37 @@ const ContentHeading = styled.h1`
   }
 `;
 
+const Divider = styled.span`
+  margin: 0 0.5rem 0 0.5rem;
+  @media screen and (min-width: 1400px) {
+    margin: 0 1rem 0 1rem;
+  }
+`;
+
 const Label = styled.span`
   position: relative;
-  &::after {
-    transition: all 0.2s;
-    content: "";
-    display: block;
-    opacity: 58%;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    @media screen and (min-width: 1400px) {
-      transform: translateX(-0.35rem) translateY(0.4rem) scaleY(90%);
-    }
+
   }
 `;
 
 const AppsLabel = styled(Label)`
-  &::after {
-    background-color: ${(props) =>
-      props.category === "apps" ? "var(--color-highlight)" : "transparent"};
+padding-left: .5rem;
+padding-bottom: .45rem;
+background-color: ${(props) =>
+  props.category === "apps" ? "var(--color-highlight)" : "transparent"}};
+  @media screen and (min-width: 1400px) {
+    padding-left: .7rem;
+padding-bottom: .5rem;
   }
 `;
 const WebsitesLabel = styled(Label)`
-  &::after {
-    background-color: ${(props) =>
-      props.category === "websites" ? "var(--color-highlight)" : "transparent"};
-    @media screen and (min-width: 1400px) {
-      transform: translateX(0.5rem) translateY(0.25rem) scaleY(90%);
-    }
-  }
+padding-right: 0.5rem;
+padding-bottom: 0.45rem;
+  background-color: ${(props) =>
+    props.category === "websites" ? "var(--color-highlight)" : "transparent"};
+  @media screen and (min-width: 1400px) {
+  padding-bottom: 0.5rem;
+  padding-right: 0.85rem;
 `;
 const NoContentWarning = styled.div`
   display: flex;
@@ -71,32 +73,69 @@ const ContentContainer = styled.ul`
   display: flex;
   flex-direction: column;
   margin-top: 2.5rem;
+  padding: 0;
+  max-height: 67vh;
+  overflow-y: scroll;
+  @media screen and (min-width: 900px) {
+    padding-right: 0.3rem;
+  }
 `;
 
 const TextContent = styled.div`
   display: flex;
   flex-direction: column;
-  width: 70%;
+  width: 90%;
+  margin: auto auto 0 auto
   margin-left: auto;
   margin-top: auto;
+  @media screen and (min-width: 900px) {
+    font-size: 2.25rem;
+    width: 70%;
+    margin-left: 2rem;
+  }
+  @media screen and (min-width: 1400px) {
+    font-size: 2.25rem;
+    width: 70%;
+    margin-right: 0;
+  }
 `;
 
 const Entry = styled.li`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
   // border: 2px solid lightblue;
   margin-bottom: 1rem;
+  @media screen and (min-width: 800px) {
+    flex-direction: row;
+  }
 `;
 
 const Name = styled.h3`
   cursor: pointer;
   margin: 0;
-  font-size: 2.25rem;
+  font-size: 2rem;
+  text-align: center;
+  @media screen and (min-width: 800px) {
+    font-size: 2.25rem;
+    text-align: left;
+  }
+  @media screen and (min-width: 1400px) {
+    font-size: 2.25rem;
+  }
 `;
 const Description = styled.p`
-  margin: 1rem 0 1.5rem 0;
-  font-size: 1.5rem;
-  max-height: 200px;
+  margin: 0.5rem 0 0.75rem 0;
+  font-size: var(--font-body-mobile);
+  text-align: center;
+  @media screen and (min-width: 800px) {
+    text-align: left;
+  }
+  @media screen and (min-width: 1400px) {
+    margin: 1rem 0 1.5rem 0;
+    font-size: 1.5rem;
+    max-height: 200px;
+  }
 `;
 const Icon = styled(Image)`
   cursor: pointer;
@@ -104,19 +143,23 @@ const Icon = styled(Image)`
 
 const IconWindow = styled.div`
   border: 3px solid var(--color-7) !important;
-  padding: 1rem 3rem;
+  padding: 0.5rem 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: 80vw;
+  max-height: 80vw;
+  padding: 1.25rem;
   @media screen and (min-width: 1400px) {
     padding: 1.5rem 5rem;
+    max-width: 25vw;
   }
 `;
 
 const CTAFormat = styled.div`
   display: flex;
   position: absolute;
-  bottom: 1rem;
+  bottom: 0.5rem;
   left: 0;
   width: 100vw;
   flex-direction: column;
@@ -126,6 +169,9 @@ const CTAFormat = styled.div`
   // justify-content: center;
   // align-content: center;
   width: 100%;
+  @media screen and (min-width: 1400px) {
+    bottom: 1rem;
+  }
 `;
 
 const CTA = styled.div`
@@ -134,6 +180,7 @@ const CTA = styled.div`
 `;
 
 const CTAText = styled.span`
+  background-color: var(--color-1);
   display: inline-block;
   font-size: 0.75rem;
   text-align: center;
@@ -142,19 +189,18 @@ const CTAText = styled.span`
   margin: auto auto 0.25rem auto;
 `;
 
-let ContentNotFound = (
-  <>
-    <NoContentWarning>
-      <Icon src={Ghosty} height={150} width={150} />
-      <NoContentText>
-        Looks like I haven't yet added anything to this section. <br />
-        Check back soon!
-      </NoContentText>
-    </NoContentWarning>
-  </>
-);
-
 export default function Projects() {
+  let ContentNotFound = (
+    <>
+      <NoContentWarning>
+        <Icon src={Ghosty} layout="responsive" height={300} width={300} />
+        <NoContentText>
+          Looks like I haven't yet added anything to this section. <br />
+          Check back soon!
+        </NoContentText>
+      </NoContentWarning>
+    </>
+  );
   const [selectedCategory, setSelectedCategory] = useState("apps");
 
   const apps = [
@@ -180,12 +226,7 @@ export default function Projects() {
       <Entry>
         <IconWindow>
           <Link href={app.url}>
-            <Icon
-              src={app.icon}
-              height={150}
-              width={150}
-              layout={"intrinsic"}
-            />
+            <Icon src={app.icon} layout="intrinsic" height={135} width={300} />
           </Link>
         </IconWindow>
         <TextContent>
@@ -198,7 +239,23 @@ export default function Projects() {
     );
   });
 
-  const WebsiteList = websites.map(() => {});
+  const WebsiteList = websites.map((site) => {
+    return (
+      <Entry>
+        <IconWindow>
+          <Link href={site.url}>
+            <Icon src={site.icon} layout="intrinsic" height={135} width={300} />
+          </Link>
+        </IconWindow>
+        <TextContent>
+          <Link href={site.url}>
+            <Name>{site.name}</Name>
+          </Link>
+          <Description>{site.description}</Description>
+        </TextContent>
+      </Entry>
+    );
+  });
   console.log(AppList);
   return (
     <Page>
@@ -221,7 +278,7 @@ export default function Projects() {
           >
             Apps{" "}
           </AppsLabel>
-          /
+          <Divider>/</Divider>
           <WebsitesLabel
             category={selectedCategory}
             onClick={() => {
@@ -245,7 +302,7 @@ export default function Projects() {
         </ContentContainer>
         <CTAFormat>
           <CTAText>
-            Seen Enough?
+            Seen enough?
             <br />
             Schedule a consultation!
           </CTAText>
