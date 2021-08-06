@@ -12,6 +12,7 @@ import styles from "../styles/Pages/about.module.css";
 import styled from "styled-components";
 
 import Ghosty from "../public/Ghosty-surprise.svg";
+import GalleryIcon from "../public/image-gallery-icon-fixed.svg";
 
 const ContentHeading = styled.h1`
   font-size: 1.75rem;
@@ -139,6 +140,9 @@ const Description = styled.p`
 `;
 const Icon = styled(Image)`
   cursor: pointer;
+  & img {
+    color: var(--color-7) !important;
+  }
 `;
 
 const IconWindow = styled.div`
@@ -219,7 +223,15 @@ export default function Projects() {
       url: "/",
     },
   ];
-  const websites = [];
+  const websites = [
+    {
+      icon: GalleryIcon,
+      name: "sarahmakes.art",
+      description:
+        "This website is an art gallery to display this artist's collages. It's a static site made with Gatsby. Thanks for being my first client Sarah!",
+      url: "https://sarahmakes.art/",
+    },
+  ];
 
   const AppList = apps.map((app) => {
     return (
@@ -243,9 +255,9 @@ export default function Projects() {
     return (
       <Entry>
         <IconWindow>
-          <Link href={site.url}>
+          <a href={site.url} target="_blank">
             <Icon src={site.icon} layout="intrinsic" height={135} width={300} />
-          </Link>
+          </a>
         </IconWindow>
         <TextContent>
           <Link href={site.url}>

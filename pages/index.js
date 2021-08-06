@@ -88,6 +88,7 @@ const Spacer = styled.div`
 
 const Frame = styled.div`
   margin: 0 auto 0 auto;
+  padding-bottom: 7px;
 `;
 
 const Columnizer = styled.div`
