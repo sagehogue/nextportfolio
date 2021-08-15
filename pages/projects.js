@@ -13,6 +13,7 @@ import styled from "styled-components";
 
 import Ghosty from "../public/Ghosty-surprise.svg";
 import GalleryIcon from "../public/image-gallery-icon-fixed.svg";
+import RecipeIcon from "../public/recipe-app-icon.svg";
 
 const ContentHeading = styled.h1`
   font-size: 1.75rem;
@@ -209,11 +210,10 @@ export default function Projects() {
 
   const apps = [
     {
-      icon: Ghosty,
-      name: "Test",
-      description:
-        "This is a test component to explore the functionality of the projects page as it is being constructed. Testy testies test testosterone. bing bong fing fong. bing bong fing fong. bing bong fing fong. ",
-      url: "/",
+      icon: RecipeIcon,
+      name: "DIY Delights",
+      description: `This is a simple recipe app made using the mealdb API (https://www.themealdb.com/api.php). You can get a random recipe, or browse by cuisine or food category.`,
+      url: "/apps/diydelight",
     },
     {
       icon: Ghosty,
