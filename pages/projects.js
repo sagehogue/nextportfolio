@@ -233,9 +233,9 @@ export default function Projects() {
     },
   ];
 
-  const AppList = apps.map((app) => {
+  const AppList = apps.map((app, index) => {
     return (
-      <Entry>
+      <Entry key={index}>
         <IconWindow>
           <Link href={app.url}>
             <Icon src={app.icon} layout="intrinsic" height={135} width={300} />

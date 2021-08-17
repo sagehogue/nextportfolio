@@ -13,6 +13,7 @@ const NavStyle = styled.a`
   letter-spacing: 2px;
   background-color: ${(props) => (props.noBG ? "0" : "var(--color-5)")};
   border: none;
+  cursor: pointer;
   &::after {
     display: block;
     width: 3.2rem;
