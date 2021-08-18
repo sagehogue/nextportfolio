@@ -125,12 +125,17 @@ export default function diydelight() {
   let [recipeMobileImg, setMobileRecipeImg] = useState(false);
   // Recipe Instructions with added line breaks
   let [recipeInstructions, setRecipeInstructions] = useState(false);
+  // Ingredient Objects - used to create ingredient table
+  let [recipeIngredients, setRecipeIngredients] = useState(false);
   // Whether or not to show the loader
   let [isLoading, setLoading] = useState(true);
   // Variable initialization
   let result, properImageForScreenSize;
   // Get Random Recipe feature functionality. Gets single recipe from API and displays on page. Runs on page load.
   let getRandomRecipe = async () => {
+    let ingredients = [],
+      measurements = [],
+      measurementsOfIngredients = [];
     result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
     console.log(result.data.meals[0]);
     setRecipeData(result.data.meals[0]);
@@ -160,6 +165,25 @@ export default function diydelight() {
         );
       })
     );
+
+    Object.entries(result.data.meals[0]).forEach((entry) => {
+      let key = entry[0];
+      let value = entry[1];
+      console.log(key);
+      if (key.includes("strIngredient") && value !== "" && value !== " ") {
+        ingredients.push({ [key]: value });
+      } else if (key.includes("strMeasure") && value !== "" && value !== " ") {
+        measurements.push({ [key]: value });
+      }
+
+      //   if (key.contains("strIngredient") {
+      //
+      // })
+    });
+    console.log(measurements, ingredients);
+    // Now we need to go through measurements, grab ID from last 1-2 digits, iterate ingredients, match to corresponding ingredient by ID, store in new array.
+    // Then we will use that array when generating JSX for the table to populate the 2 columns. :D
+    measurements.map(() => {});
     return result;
   };
   // ANIMATION
@@ -261,13 +285,16 @@ export default function diydelight() {
               initial={"closed"}
               variants={variants}
             >
-              {properImageForScreenSize}
-              <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
-              <RecipeMeta>
-                <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
-                <HorizontalDivider />{" "}
-                <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
-              </RecipeMeta>
+              <a href={recipeData.strYoutube} target="_blank">
+                {properImageForScreenSize}
+
+                <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
+                <RecipeMeta>
+                  <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
+                  <HorizontalDivider />{" "}
+                  <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
+                </RecipeMeta>
+              </a>
               <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
               <RecipeIngredients></RecipeIngredients>
             </RecipeDisplay>
