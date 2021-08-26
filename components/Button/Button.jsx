@@ -6,6 +6,7 @@ import Link from "next/link";
 // Gotta refactor this to use styled components
 
 const ButtonStyle = styled.button`
+  display: block;
   background-color: ${(props) =>
     props.bgColor ? props.bgColor : "var(--color-3)"};
   color: ${(props) => (props.color ? props.color : "var(--color-offwhite)")};
@@ -17,6 +18,7 @@ const ButtonStyle = styled.button`
     ${(props) => (props.marginRight ? props.marginRight : "0")}
     ${(props) => (props.marginBottom ? props.marginBottom : "0")}
     ${(props) => (props.marginLeft ? props.marginLeft : "0")};
+  ${(props) => (props.mAuto ? "margin: auto;" : "")}
   cursor: pointer;
   position: relative;
   transition: all 0.2s;
@@ -44,6 +46,8 @@ export default function Button({
   marginRight = false,
   marginBottom = false,
   marginLeft = false,
+  mAuto = false,
+  clickHandler = false,
 }) {
   // let classes = [
   //   styles.button,
@@ -71,6 +75,7 @@ export default function Button({
   }
   return (
     <ButtonStyle
+      mAuto={mAuto}
       marginTop={marginTop}
       marginBottom={marginBottom}
       marginLeft={marginLeft}
@@ -79,6 +84,7 @@ export default function Button({
       bgColor={bgColor}
       color={color}
       padding={padding}
+      onClick={clickHandler ? clickHandler : null}
     >
       {children}
     </ButtonStyle>

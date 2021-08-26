@@ -11,8 +11,8 @@ import Layout from "../../components/diydelight/Layout/Layout";
 import Loader from "../../components/Loader/Loader";
 
 const PageContent = styled.main`
-  grid-row: 1 / 11;
-  grid-column: 1 / 11;
+  grid-row: 1 / 46;
+  grid-column: 1 / 46;
   background-color: #fce8e8;
   @media screen and (min-width: 750px) {
     grid-column: 2 / -2;
@@ -60,7 +60,15 @@ const RecipeContainer = styled.div`
   margin-top: auto;
   display: flex;
 `;
-
+const DesktopRecipeDisplay = styled(motion.div)`
+  display: flex !important;
+`;
+const DesktopInstructions = styled.div`
+  width: 40vw;
+  display: inline-block;
+  padding: 0.75rem;
+  font-size: 1rem;
+`;
 const LoaderContainer = styled(motion.div)`
   display: flex;
   justify-content: center;
@@ -75,6 +83,17 @@ const RecipeDisplay = styled(motion.div)`
 const MobileImageContainer = styled.div`
   max-height: 100vw;
   max-width: 100vw;
+`;
+
+const DesktopImageContainer = styled.div`
+  margin: auto;
+  height: 40vw;
+  width: 40vw;
+`;
+
+const DesktopYTLink = styled.a`
+  height: 40vw;
+  width: 40vw;
 `;
 
 const RecipeTitle = styled.h3`
@@ -106,12 +125,68 @@ const RecipeInstructions = styled.p`
   line-height: 1.75rem;
   font-size: 1.1rem;
 `;
-const RecipeIngredients = styled.div`
+const RecipeIngredientsTable = styled.div`
+  grid-template-rows: repeat(auto-fit, 120px);
+  grid-template-columns: 75vw;
+  @media screen and (min-width: 750px) {
+    grid-template-columns: 7.5vw 7.5vw;
+  }
+`;
+
+const IngredientTable = styled.div`
   color: #241c1c;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 1rem 0 1rem 0;
+`;
+const IngredientTableLabels = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding-bottom: 1rem;
+`;
+const IngredientTableLabel = styled.span`
+  color: #241c1c;
+  background-color: #ffffff;
+  display: inline;
+  width: 50vw;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  @media screen and (min-width: 750px) {
+    width: 7.5vw;
+  }
+`;
+const Ingredient = styled.span`
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 0.5rem 0 0.5rem 0;
+  border-bottom: rgba(112, 112, 112, 0.5) 1px solid;
+  margin: 0 1rem 0 1rem;
+  &:last-of-type {
+    border: none;
+  }
+`;
+
+const Measurement = styled.span`
+  width: 50vw;
+  @media screen and (min-width: 750px) {
+    width: 5vw;
+  }
+`;
+const Ing = styled.span`
+  width: 50vw;
+  border-left: rgba(112, 112, 112, 0.5) 1px solid;
+  @media screen and (min-width: 750px) {
+    width: 5vw;
+  }
 `;
 
 const LineBreak = styled.br`
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 `;
 
 export default function diydelight() {
@@ -130,14 +205,22 @@ export default function diydelight() {
   // Whether or not to show the loader
   let [isLoading, setLoading] = useState(true);
   // Variable initialization
-  let result, properImageForScreenSize;
+  let result;
   // Get Random Recipe feature functionality. Gets single recipe from API and displays on page. Runs on page load.
+
+  let resetStateToLoading = () => {
+    setLoading(true);
+    setRecipeData(false);
+    setRecipeImg(false);
+    setRecipeInstructions(false);
+    setRecipeIngredients(false);
+  };
+
   let getRandomRecipe = async () => {
     let ingredients = [],
       measurements = [],
       measurementsOfIngredients = [];
     result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
-    console.log(result.data.meals[0]);
     setRecipeData(result.data.meals[0]);
     setRecipeImg(
       <Image
@@ -155,6 +238,7 @@ export default function diydelight() {
         width={"100vw"}
       />
     );
+    console.log(result.data.meals[0]);
     setRecipeInstructions(
       result.data.meals[0].strInstructions.split("\n").map((value, index) => {
         return (
@@ -169,21 +253,36 @@ export default function diydelight() {
     Object.entries(result.data.meals[0]).forEach((entry) => {
       let key = entry[0];
       let value = entry[1];
-      console.log(key);
-      if (key.includes("strIngredient") && value !== "" && value !== " ") {
+
+      if (
+        key.includes("strIngredient") &&
+        value !== "" &&
+        value !== " " &&
+        value !== null
+      ) {
         ingredients.push({ [key]: value });
-      } else if (key.includes("strMeasure") && value !== "" && value !== " ") {
+      } else if (
+        key.includes("strMeasure") &&
+        value !== "" &&
+        value !== " " &&
+        value !== null
+      ) {
         measurements.push({ [key]: value });
       }
-
-      //   if (key.contains("strIngredient") {
-      //
-      // })
     });
-    console.log(measurements, ingredients);
     // Now we need to go through measurements, grab ID from last 1-2 digits, iterate ingredients, match to corresponding ingredient by ID, store in new array.
     // Then we will use that array when generating JSX for the table to populate the 2 columns. :D
-    measurements.map(() => {});
+    setRecipeIngredients(
+      measurements.map((measurement, index) => {
+        return (
+          <Ingredient key={index}>
+            <Measurement>{`${Object.values(measurement)[0]}`}</Measurement>
+            <Ing>{`${Object.values(ingredients[index])}`}</Ing>
+          </Ingredient>
+        );
+      })
+    );
+
     return result;
   };
   // ANIMATION
@@ -193,9 +292,12 @@ export default function diydelight() {
     closed: {
       opacity: 0,
       y: "150%",
-      display: "none",
+      transitionEnd: {
+        display: "none",
+      },
     },
   };
+  // animations for the loader element
   const LoaderVariants = {
     open: { ...variants.open },
     closed: {
@@ -214,25 +316,115 @@ export default function diydelight() {
     await loaderAnimControls.start("closed");
     setLoading(false);
   };
+
+  let reloadSequence = async () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await setLoading(true);
+    await loaderAnimControls.start("open");
+    await getRandomRecipe();
+    await loaderAnimControls.start("closed");
+    setLoading(false);
+    // await resetStateToLoading();
+    // await initialLoadSequence();
+  };
+
   useEffect(() => {
     initialLoadSequence();
   }, []);
-  const mobileRecipeView = <></>;
-  const desktopRecipeView = (
-    <>
-      <MobileImageContainer>{recipeImg}</MobileImageContainer>
-    </>
-  );
-  // determine image size
-
+  // determine desktop or mobile view
+  let view;
   if (typeof window !== "undefined") {
     if (window.innerWidth > 750) {
-      properImageForScreenSize = (
-        <DesktopImageContainer>{recipeImg}</DesktopImageContainer>
+      view = (
+        <>
+          <DesktopRecipeDisplay
+            animate={isLoading ? "closed" : "open"}
+            initial={"closed"}
+            variants={variants}
+          >
+            <DesktopYTLink href={recipeData.strYoutube} target="_blank">
+              <DesktopImageContainer>{recipeImg}</DesktopImageContainer>
+            </DesktopYTLink>
+            <DesktopInstructions>
+              <a href={recipeData.strYoutube} target="_blank">
+                <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
+              </a>
+
+              <RecipeMeta>
+                <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
+                <HorizontalDivider />{" "}
+                <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
+              </RecipeMeta>
+              <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
+              <Button
+                bgColor={"#FC7419"}
+                color={"#FFE9E9"}
+                marginRight="auto"
+                marginLeft="auto"
+                marginTop="1rem"
+                padding={"1rem 2rem"}
+                clickHandler={() => {
+                  reloadSequence();
+                }}
+              >
+                New Random Recipe
+              </Button>
+            </DesktopInstructions>
+            <IngredientTable>
+              <IngredientTableLabels>
+                <IngredientTableLabel>Measurement</IngredientTableLabel>
+                <IngredientTableLabel>Ingredient</IngredientTableLabel>
+              </IngredientTableLabels>
+              <RecipeIngredientsTable>
+                {recipeIngredients}
+              </RecipeIngredientsTable>
+            </IngredientTable>
+          </DesktopRecipeDisplay>
+        </>
       );
     } else {
-      properImageForScreenSize = (
-        <MobileImageContainer>{recipeMobileImg}</MobileImageContainer>
+      view = (
+        <RecipeDisplay
+          animate={isLoading ? "closed" : "open"}
+          initial={"closed"}
+          variants={variants}
+        >
+          <a href={recipeData.strYoutube} target="_blank">
+            <MobileImageContainer>{recipeMobileImg}</MobileImageContainer>
+
+            <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
+            <RecipeMeta>
+              <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
+              <HorizontalDivider />{" "}
+              <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
+            </RecipeMeta>
+          </a>
+          <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
+          <IngredientTable>
+            <IngredientTableLabels>
+              <IngredientTableLabel>Measurement</IngredientTableLabel>
+              <IngredientTableLabel>Ingredient</IngredientTableLabel>
+            </IngredientTableLabels>
+            <RecipeIngredientsTable>{recipeIngredients}</RecipeIngredientsTable>
+          </IngredientTable>
+          <Button
+            bgColor={"#FC7419"}
+            color={"#FFE9E9"}
+            marginRight="auto"
+            marginLeft="auto"
+            marginTop="1rem"
+            padding={"1rem 2rem"}
+            clickHandler={() => {
+              reloadSequence();
+            }}
+          >
+            New Random Recipe
+          </Button>
+        </RecipeDisplay>
       );
     }
   }
@@ -279,26 +471,7 @@ export default function diydelight() {
           >
             <Loader />
           </LoaderContainer>
-          {activeComponent === "random" && recipeData ? (
-            <RecipeDisplay
-              animate={isLoading ? "closed" : "open"}
-              initial={"closed"}
-              variants={variants}
-            >
-              <a href={recipeData.strYoutube} target="_blank">
-                {properImageForScreenSize}
-
-                <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
-                <RecipeMeta>
-                  <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
-                  <HorizontalDivider />{" "}
-                  <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
-                </RecipeMeta>
-              </a>
-              <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
-              <RecipeIngredients></RecipeIngredients>
-            </RecipeDisplay>
-          ) : null}
+          {activeComponent === "random" && recipeData ? view : null}
         </RecipeContainer>
       </PageContent>
     </Layout>
