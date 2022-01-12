@@ -205,12 +205,29 @@ const LineBreak = styled.br`
 const BrowseContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
 `;
 
 const BrowseTabs = styled.div`
   display: flex;
   margin-right: auto;
   margin-bottom: auto;
+`;
+
+const Clickable = styled.div`
+  padding: 1rem 1.5rem;
+  background-color: #d94a4a;
+  color: #ffe9e9;
+  text-align: center;
+`;
+const ClickableGrid = styled.div`
+  padding: 5rem;
+  display: grid;
+  /* define the number of grid columns */
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 1rem;
 `;
 
 const CategoryButton = styled(Button)``;
@@ -276,6 +293,10 @@ export default function diydelight() {
   let [recipeInstructions, setRecipeInstructions] = useState(false);
   // Ingredient Objects - used to create ingredient table
   let [recipeIngredients, setRecipeIngredients] = useState(false);
+
+  let [browseView, setBrowseView] = useState(false);
+
+  let [browseContent, setBrowseContent] = useState(false);
 
   // Get Random Recipe feature functionality. Gets single recipe from API and displays on page. Runs on page load.
 
@@ -442,18 +463,53 @@ export default function diydelight() {
     // await initialLoadSequence();
   };
 
+  let generateClickables = (state) => {
+    let cuisines, categories, search;
+    switch (state) {
+      case "all":
+        cuisines = mealCuisines.map((cuisine) => (
+          <Clickable>{cuisine.strArea}</Clickable>
+        ));
+        categories = mealCategories.map((category) => (
+          <Clickable>{category.strCategory}</Clickable>
+        ));
+        setBrowseContent([...cuisines, ...categories]);
+        break;
+      case "cuisine":
+        cuisines = mealCuisines.map((cuisine) => (
+          <Clickable>{cuisine.strArea}</Clickable>
+        ));
+        setBrowseContent(cuisines);
+        break;
+      case "category":
+        categories = mealCategories.map((category) => (
+          <Clickable>{category.strCategory}</Clickable>
+        ));
+        setBrowseContent(categories);
+        break;
+      case "search":
+        break;
+    }
+  };
+
   useEffect(() => {
     initialLoadSequence();
   }, []);
+
+  // When browseview changes, new clickables must be generated to present the user with the new data.
+  useEffect(() => {
+    console.log("Creating new clickables!");
+    generateClickables(browseView);
+  }, [browseView]);
 
   // *************
   //     VIEWS
   // *************
 
-  // determine desktop or mobile view
+  // RANDOM RECIPE VIEW
   let recipeView, getBrowseView, getSearchView;
   if (typeof window !== "undefined") {
-    // RANDOM RECIPE VIEW
+    // determine desktop or mobile view
     if (window.innerWidth > 750) {
       recipeView = (
         <>
@@ -544,36 +600,13 @@ export default function diydelight() {
       );
     }
     getBrowseView = () => {
-      return (
-        <BrowseContainer
-          animate={isLoading ? "closed" : "open"}
-          initial={"closed"}
-          variants={variants}
-        >
-          <BrowseTabs>
-            <CategoryButton
-              bgColor={"#FC7419"}
-              color={"#FFE9E9"}
-              padding={".5rem 1rem"}
-            >
-              Category
-            </CategoryButton>
-            <CuisineButton
-              bgColor={"#FC7419"}
-              color={"#FFE9E9"}
-              padding={".5rem 1rem"}
-            >
-              Cuisine
-            </CuisineButton>
-          </BrowseTabs>
-        </BrowseContainer>
-      );
+      return;
     };
     getSearchView = () => {
       return (
         <SearchContainer>
           <SearchHeading>
-            Enter the name of a dish to search the databse for a recipe.
+            Enter the name of a dish to search the database for a recipe.
           </SearchHeading>
           <SearchBox>
             <SearchInput type="text" />
@@ -621,14 +654,15 @@ export default function diydelight() {
                   categories: (await getMealCategories()).data.meals,
                   cuisines: (await getMealCuisines()).data.meals,
                 };
-
                 return results;
               };
 
               setActiveComponent("browse");
+
               reloadSequence(callback).then((results) => {
                 setMealCategories(results.categories);
                 setMealCuisines(results.cuisines);
+                setBrowseView("category");
               });
             }}
           >
@@ -653,7 +687,43 @@ export default function diydelight() {
             <Loader />
           </LoaderContainer>
           {activeComponent === "random" && recipeData ? recipeView : null}
-          {activeComponent === "browse" ? getBrowseView() : null}
+          {activeComponent === "browse" ? (
+            <BrowseContainer
+              animate={isLoading ? "closed" : "open"}
+              initial={"closed"}
+              variants={variants}
+            >
+              <BrowseTabs>
+                <Button
+                  bgColor={"#FC7419"}
+                  color={"#FFE9E9"}
+                  padding={".5rem 1rem"}
+                  onClick={() => setBrowseView("all")}
+                >
+                  All
+                </Button>
+                <CategoryButton
+                  bgColor={"#FC7419"}
+                  color={"#FFE9E9"}
+                  padding={".5rem 1rem"}
+                  onClick={() => setBrowseView("category")}
+                  active={browseView}
+                >
+                  Category
+                </CategoryButton>
+                <CuisineButton
+                  bgColor={"#FC7419"}
+                  color={"#FFE9E9"}
+                  padding={".5rem 1rem"}
+                  onClick={() => setBrowseView("cuisine")}
+                  active={browseView}
+                >
+                  Cuisine
+                </CuisineButton>
+              </BrowseTabs>
+              <ClickableGrid>{browseContent}</ClickableGrid>
+            </BrowseContainer>
+          ) : null}
           {activeComponent === "search" ? getSearchView() : null}
         </RecipeContainer>
       </PageContent>

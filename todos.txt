@@ -1,5 +1,9 @@
 ***Major***
 1. Browse feature yet to be implemented.
+    a. All/Category/Cuisine buttons currently do not change state when clicked. They have clickhandlers so I am not sure why.
+    b. The clickables do not have clickhandlers, and so do not fetch the respective categories when you search. 
+    c. I do not have a recipe view that can be used for the random recipe and a recipe you get from this yet. I like the idea of a back button for the browsed recipes but it is
+    not necessary.
 1. Search feature yet to be implemented.
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
