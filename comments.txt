@@ -1,0 +1,2 @@
+1. Color scheme somewhat ugly.
+2. Resolution of images is sort of low.. could use a smaller dish image and use the extra space for a wider instruction display. 

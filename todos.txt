@@ -1,0 +1,14 @@
+***Major***
+1. Browse feature yet to be implemented.
+1. Search feature yet to be implemented.
+***Minor***
+1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
+2. I need a generic page window for the browse/random recipe. Something to handle transitioning in/out when content is to be changed
+***Bugs***
+
+1. Page content not appopriately sized on 1920x1080 monitor, scrollbar shows in ugly fashion. 
+2. The page content is not properly centered on mobile. 
+
+***COMPLETE/SOLVED***
+* The loader symbol presented when data is fetching is not properly centered in mobile or desktop.
+*  Categories are shifting when loader is on screen. 
