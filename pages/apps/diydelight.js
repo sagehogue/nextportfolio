@@ -298,6 +298,9 @@ export default function diydelight() {
 
   let [browseContent, setBrowseContent] = useState(false);
 
+  // Where meals are stored after a category or cuisine is searched
+  let [mealGroup, setMealGroup] = useState(false);
+
   // Get Random Recipe feature functionality. Gets single recipe from API and displays on page. Runs on page load.
 
   // *************
@@ -330,16 +333,14 @@ export default function diydelight() {
     );
   };
 
-  // Fetch random recipe data, generate images and store in state as well as relevant data.
-  let getRandomRecipe = async () => {
+  // set single recipe data
+  let loadRecipeState = (meal) => {
     let ingredients = [],
-      measurements = [],
-      measurementsOfIngredients = [];
-    result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
-    setRecipeData(result.data.meals[0]);
+      measurements = [];
+    setRecipeData(meal);
     setRecipeImg(
       <Image
-        src={result.data.meals[0].strMealThumb}
+        src={meal.strMealThumb}
         layout="responsive"
         height={"25vh"}
         width={"25vw"}
@@ -347,15 +348,14 @@ export default function diydelight() {
     );
     setMobileRecipeImg(
       <Image
-        src={result.data.meals[0].strMealThumb}
+        src={meal.strMealThumb}
         layout="responsive"
         height={"100vw"}
         width={"100vw"}
       />
     );
-    console.log(result.data.meals[0]);
     setRecipeInstructions(
-      result.data.meals[0].strInstructions.split("\n").map((value, index) => {
+      meal.strInstructions.split("\n").map((value, index) => {
         return (
           <span key={index}>
             {value}
@@ -364,7 +364,6 @@ export default function diydelight() {
         );
       })
     );
-
     Object.entries(result.data.meals[0]).forEach((entry) => {
       let key = entry[0];
       let value = entry[1];
@@ -385,8 +384,6 @@ export default function diydelight() {
         measurements.push({ [key]: value });
       }
     });
-    // Now we need to go through measurements, grab ID from last 1-2 digits, iterate ingredients, match to corresponding ingredient by ID, store in new array.
-    // Then we will use that array when generating JSX for the table to populate the 2 columns. :D
     setRecipeIngredients(
       measurements.map((measurement, index) => {
         return (
@@ -397,7 +394,23 @@ export default function diydelight() {
         );
       })
     );
+    return meal;
+  };
 
+  // Fetch random recipe data, generate images and store in state as well as relevant data.
+  let getRandomRecipe = async () => {
+    result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
+    loadRecipeState(result.data.meals[0]);
+    return result;
+  };
+
+  let getSpecificRecipe = async (id) => {
+    console.log(id);
+    result = await axios(
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+    );
+    console.log(result);
+    loadRecipeState(result.data.meals[0]);
     return result;
   };
 
@@ -459,36 +472,89 @@ export default function diydelight() {
       console.log(result);
       resolve(result);
     });
-    // await resetStateToLoading();
-    // await initialLoadSequence();
   };
 
-  let generateClickables = (state) => {
-    let cuisines, categories, search;
-    switch (state) {
-      case "all":
-        cuisines = mealCuisines.map((cuisine) => (
-          <Clickable>{cuisine.strArea}</Clickable>
-        ));
-        categories = mealCategories.map((category) => (
-          <Clickable>{category.strCategory}</Clickable>
-        ));
-        setBrowseContent([...cuisines, ...categories]);
-        break;
-      case "cuisine":
-        cuisines = mealCuisines.map((cuisine) => (
-          <Clickable>{cuisine.strArea}</Clickable>
-        ));
-        setBrowseContent(cuisines);
-        break;
-      case "category":
-        categories = mealCategories.map((category) => (
-          <Clickable>{category.strCategory}</Clickable>
-        ));
-        setBrowseContent(categories);
-        break;
-      case "search":
-        break;
+  let generateClickables = (state, data = false) => {
+    // MUST REPLACE SOME OF THIS LOGIC WITH A GETSPECIFICMEAL FUNC
+    let cuisines, categories, search, meals;
+    // code runs if function is supplied with specific data
+    if (data) {
+      const clickHandler = (e) => {
+        let meal = data.filter(
+          (content) => content.strMeal === e.target.dataset.id
+        );
+        console.log(meal);
+        getSpecificRecipe(meal[0].idMeal);
+        // e.target.dataset.id
+      };
+      console.log(data);
+      meals = data.map((meal) => (
+        <Clickable
+          data-type={"meal"}
+          data-id={meal.strMeal}
+          onClick={clickHandler}
+        >
+          {meal.strMeal}
+        </Clickable>
+      ));
+      setBrowseContent(meals);
+      // default case: generate mealgroups from state
+    } else {
+      let clickHandler = (e) => {
+        let query;
+
+        // actual term to query
+        let id = e.target.dataset.id;
+
+        // cuisine or category, each uses a different API url
+        if (e.target.dataset.type === "cuisine") {
+          query = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${id}`;
+        } else {
+          query = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${id}`;
+        }
+        reloadSequence(async () => await axios(query))
+          .then((res) => {
+            setMealGroup(res.data.meals);
+            return res;
+          })
+          .then((res) => {
+            console.log("set meal group!");
+            generateClickables(false, res.data.meals);
+          })
+          .catch((err) => console.log(err));
+      };
+
+      cuisines = mealCuisines.map((cuisine) => (
+        <Clickable
+          data-type={"cuisine"}
+          data-id={cuisine.strArea}
+          onClick={clickHandler}
+        >
+          {cuisine.strArea}
+        </Clickable>
+      ));
+      categories = mealCategories.map((category) => (
+        <Clickable
+          data-type={"category"}
+          data-id={category.strCategory}
+          onClick={clickHandler}
+        >
+          {category.strCategory}
+        </Clickable>
+      ));
+      switch (state) {
+        case "all":
+          setBrowseContent([...cuisines, ...categories]);
+          break;
+        case "cuisine":
+          setBrowseContent(cuisines);
+          break;
+        case "category":
+          setBrowseContent(categories);
+          break;
+        case "search":
+          break;
+      }
     }
   };
 
