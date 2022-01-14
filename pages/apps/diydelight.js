@@ -54,6 +54,9 @@ const AppNavLink = styled.a`
     margin: 0 1.25rem 0 1.25rem;
   }
 `;
+
+const SingleRecipeView = styled.section``;
+
 const RecipeContainer = styled.div`
   background-color: #fcf0e8;
   min-height: 80vh;
@@ -294,6 +297,9 @@ export default function diydelight() {
   // Ingredient Objects - used to create ingredient table
   let [recipeIngredients, setRecipeIngredients] = useState(false);
 
+  // for browse view selected recipe. eventually should refactor to be the only place a "single recipe view" data object is stored.
+  let [singleRecipe, setSingleRecipe] = useState(false);
+
   let [browseView, setBrowseView] = useState(false);
 
   let [browseContent, setBrowseContent] = useState(false);
@@ -311,13 +317,13 @@ export default function diydelight() {
   let result;
 
   // Deletes data, sets state to load - Currently unused
-  let resetStateToLoading = () => {
-    setLoading(true);
-    setRecipeData(false);
-    setRecipeImg(false);
-    setRecipeInstructions(false);
-    setRecipeIngredients(false);
-  };
+  // let resetStateToLoading = () => {
+  //   setLoading(true);
+  //   setRecipeData(false);
+  //   setRecipeImg(false);
+  //   setRecipeInstructions(false);
+  //   setRecipeIngredients(false);
+  // };
 
   // Fetch meal category data
   let getMealCategories = async () => {
@@ -479,12 +485,14 @@ export default function diydelight() {
     let cuisines, categories, search, meals;
     // code runs if function is supplied with specific data
     if (data) {
-      const clickHandler = (e) => {
+      const clickHandler = async (e) => {
         let meal = data.filter(
           (content) => content.strMeal === e.target.dataset.id
         );
         console.log(meal);
-        getSpecificRecipe(meal[0].idMeal);
+        let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+        console.log(specificMeal.data.meals[0]);
+        setSingleRecipe(specificMeal);
         // e.target.dataset.id
       };
       console.log(data);
@@ -518,7 +526,6 @@ export default function diydelight() {
             return res;
           })
           .then((res) => {
-            console.log("set meal group!");
             generateClickables(false, res.data.meals);
           })
           .catch((err) => console.log(err));
@@ -564,7 +571,6 @@ export default function diydelight() {
 
   // When browseview changes, new clickables must be generated to present the user with the new data.
   useEffect(() => {
-    console.log("Creating new clickables!");
     generateClickables(browseView);
   }, [browseView]);
 
@@ -755,7 +761,7 @@ export default function diydelight() {
           {activeComponent === "random" && recipeData ? recipeView : null}
           {activeComponent === "browse" ? (
             <BrowseContainer
-              animate={isLoading ? "closed" : "open"}
+              animate={isLoading || singleRecipe ? "closed" : "open"}
               initial={"closed"}
               variants={variants}
             >
@@ -786,6 +792,11 @@ export default function diydelight() {
                 >
                   Cuisine
                 </CuisineButton>
+                <SingleRecipeView
+                  animate={isLoading || !singleRecipe ? "closed" : "open"}
+                  initial={"closed"}
+                  variants={variants}
+                ></SingleRecipeView>
               </BrowseTabs>
               <ClickableGrid>{browseContent}</ClickableGrid>
             </BrowseContainer>
