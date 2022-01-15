@@ -481,9 +481,8 @@ export default function diydelight() {
   };
 
   let generateClickables = (state, data = false) => {
-    // MUST REPLACE SOME OF THIS LOGIC WITH A GETSPECIFICMEAL FUNC
     let cuisines, categories, search, meals;
-    // code runs if function is supplied with specific data
+    // code runs if function is supplied with data for specific meal recipe
     if (data) {
       const clickHandler = async (e) => {
         let meal = data.filter(
@@ -493,6 +492,7 @@ export default function diydelight() {
         let specificMeal = await getSpecificRecipe(meal[0].idMeal);
         console.log(specificMeal.data.meals[0]);
         setSingleRecipe(specificMeal);
+        setRecipeData(specificMeal.data.meals[0]);
         // e.target.dataset.id
       };
       console.log(data);
@@ -505,9 +505,10 @@ export default function diydelight() {
           {meal.strMeal}
         </Clickable>
       ));
+      // browseContent is state that will store the JSX to be rendered.
       setBrowseContent(meals);
-      // default case: generate mealgroups from state
     } else {
+      // default case: generate mealgroups from state
       let clickHandler = (e) => {
         let query;
 
@@ -579,45 +580,81 @@ export default function diydelight() {
   // *************
 
   // RANDOM RECIPE VIEW
-  let recipeView, getBrowseView, getSearchView;
-  if (typeof window !== "undefined") {
-    // determine desktop or mobile view
-    if (window.innerWidth > 750) {
-      recipeView = (
-        <>
-          <DesktopRecipeDisplay
+  let recipeView,
+    getSearchView,
+    singleRecipeMobile,
+    singleRecipeDesktop,
+    getRecipeView;
+
+  getRecipeView = () => {
+    if (typeof window !== "undefined") {
+      // determine desktop or mobile view
+      if (window.innerWidth > 750) {
+        return (
+          <>
+            <DesktopRecipeDisplay
+              animate={isLoading ? "closed" : "open"}
+              initial={"closed"}
+              variants={variants}
+            >
+              <DesktopYTLink href={recipeData.strYoutube} target="_blank">
+                <DesktopImageContainer>{recipeImg}</DesktopImageContainer>
+              </DesktopYTLink>
+              <DesktopInstructions>
+                <a href={recipeData.strYoutube} target="_blank">
+                  <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
+                </a>
+
+                <RecipeMeta>
+                  <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
+                  <HorizontalDivider />{" "}
+                  <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
+                </RecipeMeta>
+                <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
+                <Button
+                  bgColor={"#FC7419"}
+                  color={"#FFE9E9"}
+                  marginRight="auto"
+                  marginLeft="auto"
+                  marginTop="1rem"
+                  padding={"1rem 2rem"}
+                  clickHandler={() => {
+                    reloadSequence(getRandomRecipe, true);
+                  }}
+                >
+                  New Random Recipe
+                </Button>
+              </DesktopInstructions>
+              <IngredientTable>
+                <IngredientTableLabels>
+                  <IngredientTableLabel>Measurement</IngredientTableLabel>
+                  <IngredientTableLabel>Ingredient</IngredientTableLabel>
+                </IngredientTableLabels>
+                <RecipeIngredientsTable>
+                  {recipeIngredients}
+                </RecipeIngredientsTable>
+              </IngredientTable>
+            </DesktopRecipeDisplay>
+          </>
+        );
+      } else {
+        return (
+          <RecipeDisplay
             animate={isLoading ? "closed" : "open"}
             initial={"closed"}
             variants={variants}
           >
-            <DesktopYTLink href={recipeData.strYoutube} target="_blank">
-              <DesktopImageContainer>{recipeImg}</DesktopImageContainer>
-            </DesktopYTLink>
-            <DesktopInstructions>
-              <a href={recipeData.strYoutube} target="_blank">
-                <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
-              </a>
+            <a href={recipeData.strYoutube} target="_blank">
+              <MobileImageContainer>{recipeMobileImg}</MobileImageContainer>
 
+              <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
               <RecipeMeta>
                 <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
                 <HorizontalDivider />{" "}
                 <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
               </RecipeMeta>
-              <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
-              <Button
-                bgColor={"#FC7419"}
-                color={"#FFE9E9"}
-                marginRight="auto"
-                marginLeft="auto"
-                marginTop="1rem"
-                padding={"1rem 2rem"}
-                clickHandler={() => {
-                  reloadSequence(getRandomRecipe, true);
-                }}
-              >
-                New Random Recipe
-              </Button>
-            </DesktopInstructions>
+            </a>
+            <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
             <IngredientTable>
               <IngredientTableLabels>
                 <IngredientTableLabel>Measurement</IngredientTableLabel>
@@ -627,61 +664,6 @@ export default function diydelight() {
                 {recipeIngredients}
               </RecipeIngredientsTable>
             </IngredientTable>
-          </DesktopRecipeDisplay>
-        </>
-      );
-    } else {
-      recipeView = (
-        <RecipeDisplay
-          animate={isLoading ? "closed" : "open"}
-          initial={"closed"}
-          variants={variants}
-        >
-          <a href={recipeData.strYoutube} target="_blank">
-            <MobileImageContainer>{recipeMobileImg}</MobileImageContainer>
-
-            <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
-            <RecipeMeta>
-              <RecipeMetaDetail>{recipeData.strArea} </RecipeMetaDetail>
-              <HorizontalDivider />{" "}
-              <RecipeMetaDetail>{recipeData.strCategory}</RecipeMetaDetail>
-            </RecipeMeta>
-          </a>
-          <RecipeInstructions>{recipeInstructions}</RecipeInstructions>
-          <IngredientTable>
-            <IngredientTableLabels>
-              <IngredientTableLabel>Measurement</IngredientTableLabel>
-              <IngredientTableLabel>Ingredient</IngredientTableLabel>
-            </IngredientTableLabels>
-            <RecipeIngredientsTable>{recipeIngredients}</RecipeIngredientsTable>
-          </IngredientTable>
-          <Button
-            bgColor={"#FC7419"}
-            color={"#FFE9E9"}
-            marginRight="auto"
-            marginLeft="auto"
-            marginTop="1rem"
-            padding={"1rem 2rem"}
-            clickHandler={() => {
-              reloadSequence(getRandomRecipe, true);
-            }}
-          >
-            New Random Recipe
-          </Button>
-        </RecipeDisplay>
-      );
-    }
-    getBrowseView = () => {
-      return;
-    };
-    getSearchView = () => {
-      return (
-        <SearchContainer>
-          <SearchHeading>
-            Enter the name of a dish to search the database for a recipe.
-          </SearchHeading>
-          <SearchBox>
-            <SearchInput type="text" />
             <Button
               bgColor={"#FC7419"}
               color={"#FFE9E9"}
@@ -690,17 +672,43 @@ export default function diydelight() {
               marginTop="1rem"
               padding={"1rem 2rem"}
               clickHandler={() => {
-                console.log("Searched!");
+                reloadSequence(getRandomRecipe, true);
               }}
             >
-              Submit
+              New Random Recipe
             </Button>
-            {/* <SearchButton value="Submit" type="button"></SearchButton> */}
-          </SearchBox>
-        </SearchContainer>
-      );
-    };
-  }
+          </RecipeDisplay>
+        );
+      }
+
+      getSearchView = () => {
+        return (
+          <SearchContainer>
+            <SearchHeading>
+              Enter the name of a dish to search the database for a recipe.
+            </SearchHeading>
+            <SearchBox>
+              <SearchInput type="text" />
+              <Button
+                bgColor={"#FC7419"}
+                color={"#FFE9E9"}
+                marginRight="auto"
+                marginLeft="auto"
+                marginTop="1rem"
+                padding={"1rem 2rem"}
+                clickHandler={() => {
+                  console.log("Searched!");
+                }}
+              >
+                Submit
+              </Button>
+              {/* <SearchButton value="Submit" type="button"></SearchButton> */}
+            </SearchBox>
+          </SearchContainer>
+        );
+      };
+    }
+  };
 
   return (
     <Layout>
@@ -711,6 +719,7 @@ export default function diydelight() {
             thisComponent="random"
             activeComponent={activeComponent}
             onClick={() => {
+              reloadSequence(getRandomRecipe, true);
               setActiveComponent("random");
             }}
           >
@@ -758,48 +767,56 @@ export default function diydelight() {
           >
             <Loader />
           </LoaderContainer>
-          {activeComponent === "random" && recipeData ? recipeView : null}
+          {activeComponent === "random" && recipeData ? getRecipeView() : null}
           {activeComponent === "browse" ? (
-            <BrowseContainer
-              animate={isLoading || singleRecipe ? "closed" : "open"}
-              initial={"closed"}
-              variants={variants}
-            >
-              <BrowseTabs>
-                <Button
-                  bgColor={"#FC7419"}
-                  color={"#FFE9E9"}
-                  padding={".5rem 1rem"}
-                  onClick={() => setBrowseView("all")}
+            <>
+              <BrowseContainer
+                animate={isLoading || singleRecipe ? "closed" : "open"}
+                initial={"closed"}
+                variants={variants}
+              >
+                <BrowseTabs
+                // animate={isLoading || singleRecipe ? "closed" : "open"}
+                // initial={"closed"}
+                // variants={variants}
                 >
-                  All
-                </Button>
-                <CategoryButton
-                  bgColor={"#FC7419"}
-                  color={"#FFE9E9"}
-                  padding={".5rem 1rem"}
-                  onClick={() => setBrowseView("category")}
-                  active={browseView}
-                >
-                  Category
-                </CategoryButton>
-                <CuisineButton
-                  bgColor={"#FC7419"}
-                  color={"#FFE9E9"}
-                  padding={".5rem 1rem"}
-                  onClick={() => setBrowseView("cuisine")}
-                  active={browseView}
-                >
-                  Cuisine
-                </CuisineButton>
-                <SingleRecipeView
-                  animate={isLoading || !singleRecipe ? "closed" : "open"}
-                  initial={"closed"}
-                  variants={variants}
-                ></SingleRecipeView>
-              </BrowseTabs>
-              <ClickableGrid>{browseContent}</ClickableGrid>
-            </BrowseContainer>
+                  <Button
+                    bgColor={"#FC7419"}
+                    color={"#FFE9E9"}
+                    padding={".5rem 1rem"}
+                    onClick={() => setBrowseView("all")}
+                  >
+                    All
+                  </Button>
+                  <CategoryButton
+                    bgColor={"#FC7419"}
+                    color={"#FFE9E9"}
+                    padding={".5rem 1rem"}
+                    onClick={() => setBrowseView("category")}
+                    active={browseView}
+                  >
+                    Category
+                  </CategoryButton>
+                  <CuisineButton
+                    bgColor={"#FC7419"}
+                    color={"#FFE9E9"}
+                    padding={".5rem 1rem"}
+                    onClick={() => setBrowseView("cuisine")}
+                    active={browseView}
+                  >
+                    Cuisine
+                  </CuisineButton>
+                </BrowseTabs>
+                <ClickableGrid>{browseContent}</ClickableGrid>
+              </BrowseContainer>
+              <SingleRecipeView
+                animate={isLoading || !singleRecipe ? "closed" : "open"}
+                initial={"closed"}
+                variants={variants}
+              >
+                {!isLoading && singleRecipe ? getRecipeView() : null}
+              </SingleRecipeView>
+            </>
           ) : null}
           {activeComponent === "search" ? getSearchView() : null}
         </RecipeContainer>

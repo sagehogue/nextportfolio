@@ -1,16 +1,10 @@
 ***Major***
-1. Browse feature yet to be implemented.
-    a. All/Category/Cuisine buttons currently do not change state when clicked. They have clickhandlers so I am not sure why.
-    b. I do not have a recipe view that can be used for the random recipe and a recipe you get from this yet. I like the idea of a back button for the browsed recipes but it is
-    not necessary.
-    c. So you can select a single recipe to view through the browse menu but it will not be visible on screen, though the data is loaded through
-    the "getSpecificRecipe" function. Next up is to ensure the data is properly rendered onto the user's screen, and that all state is properly
-    set so that there will not be any unexpected behavior. 
-    d. "Single recipe view" should be created and shared between random recipe and a recipe reached through the browse menu.
-1. Search feature yet to be implemented.
+1. Browse feature yet to be fully implemented.
+
+2. Search feature yet to be implemented.
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
-2. I need a generic page window for the browse/random recipe. Something to handle transitioning in/out when content is to be changed
+2. Browse needs a back button to support better browsing. 
 ***Bugs***
 
 1. Page content not appopriately sized on 1920x1080 monitor, scrollbar shows in ugly fashion. 
@@ -19,3 +13,11 @@
 ***COMPLETE/SOLVED***
 * The loader symbol presented when data is fetching is not properly centered in mobile or desktop.
 *  Categories are shifting when loader is on screen. 
+* I need a generic page window for the browse/random recipe. Something to handle transitioning in/out when content is to be changed
+* All/Category/Cuisine buttons currently do not change state when clicked. They have clickhandlers so I am not sure why.
+* I do not have a recipe view that can be used for the random recipe and a recipe you get from this yet. I like the idea of a back button for the browsed recipes but it is
+not necessary.
+* So you can select a single recipe to view through the browse menu but it will not be visible on screen, though the data is loaded through
+the "getSpecificRecipe" function. Next up is to ensure the data is properly rendered onto the user's screen, and that all state is properly
+set so that there will not be any unexpected behavior. 
+* "Single recipe view" should be created and shared between random recipe and a recipe reached through the browse menu.
