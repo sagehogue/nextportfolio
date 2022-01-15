@@ -4,6 +4,8 @@ import Image from "next/image";
 import { motion, useAnimation } from "framer-motion";
 import axios from "axios";
 
+import { AiOutlineArrowLeft } from "react-icons/ai";
+
 import styled from "styled-components";
 import Wrapper from "../../components/Wrapper/Wrapper";
 import Button from "../../components/Button/Button";
@@ -233,7 +235,9 @@ const ClickableGrid = styled.div`
   grid-gap: 1rem;
 `;
 
-const CategoryButton = styled(Button)``;
+const CategoryButton = styled(Button)`
+  color: ${(props) => (props.active === "category" ? "#D94A4A" : "#FFE9E9")};
+`;
 
 const CuisineButton = styled(Button)``;
 
@@ -262,6 +266,32 @@ const SearchButton = styled.input`
   border-radius: 3px;
   margin-left: 1rem;
   border: 2px #241c1c solid;
+`;
+
+let SearchResultsHeading = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+let SearchHeadingText = styled.h2`
+  text-align: center;
+  color: #241c1c;
+`;
+
+let SearchReturn = styled.h4`
+  text-align: center;
+`;
+
+let SearchResultsDisplay = styled(motion.div)`
+  display: flex;
+  width: 100%;
+`;
+
+let SearchedRecipeWindow = styled(motion.div)``;
+
+let RedText = styled.span`
+  color: #d94a4a;
 `;
 
 export default function diydelight() {
@@ -307,7 +337,11 @@ export default function diydelight() {
   // Where meals are stored after a category or cuisine is searched
   let [mealGroup, setMealGroup] = useState(false);
 
-  // Get Random Recipe feature functionality. Gets single recipe from API and displays on page. Runs on page load.
+  // User input character string - to be sent to API
+  let [searchTerm, setSearchTerm] = useState(false);
+  let [searchResults, setSearchResults] = useState(false);
+  let [searchClickables, setSearchClickables] = useState(false);
+  let [showSearchedRecipe, setShowSearchedRecipe] = useState(false);
 
   // *************
   //   FUNCTIONS
@@ -315,15 +349,6 @@ export default function diydelight() {
 
   // Variable initialization
   let result;
-
-  // Deletes data, sets state to load - Currently unused
-  // let resetStateToLoading = () => {
-  //   setLoading(true);
-  //   setRecipeData(false);
-  //   setRecipeImg(false);
-  //   setRecipeInstructions(false);
-  //   setRecipeIngredients(false);
-  // };
 
   // Fetch meal category data
   let getMealCategories = async () => {
@@ -336,6 +361,12 @@ export default function diydelight() {
   let getMealCuisines = async () => {
     return await axios(
       `https://www.themealdb.com/api/json/v1/1/list.php?a=list`
+    );
+  };
+
+  let getSearchResult = async (searchTerm) => {
+    return await axios(
+      `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchTerm}`
     );
   };
 
@@ -462,6 +493,7 @@ export default function diydelight() {
 
   // More of a load function than a reload function now.. this scrolls page to top, uses loading animation, and calls async function.
   let reloadSequence = async (asyncFunction, scrollTop = false) => {
+    let result;
     return new Promise(async (resolve, reject) => {
       if (scrollTop) {
         window.scrollTo({
@@ -472,29 +504,49 @@ export default function diydelight() {
       }
       await setLoading(true);
       await loaderAnimControls.start("open");
+
       const result = await asyncFunction();
+
       await loaderAnimControls.start("closed");
       setLoading(false);
-      console.log(result);
       resolve(result);
     });
   };
 
   let generateClickables = (state, data = false) => {
     let cuisines, categories, search, meals;
-    // code runs if function is supplied with data for specific meal recipe
+    // code runs if function is supplied with data
     if (data) {
-      const clickHandler = async (e) => {
-        let meal = data.filter(
-          (content) => content.strMeal === e.target.dataset.id
-        );
-        console.log(meal);
-        let specificMeal = await getSpecificRecipe(meal[0].idMeal);
-        console.log(specificMeal.data.meals[0]);
-        setSingleRecipe(specificMeal);
-        setRecipeData(specificMeal.data.meals[0]);
-        // e.target.dataset.id
-      };
+      let clickHandler;
+      // code runs if function is run for browse section
+      if (state === "all" || state === "cuisine" || state === "category") {
+        clickHandler = async (e) => {
+          let meal = data.filter(
+            (content) => content.strMeal === e.target.dataset.id
+          );
+          let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+          console.log(specificMeal.data.meals[0]);
+          setSingleRecipe(specificMeal);
+          setRecipeData(specificMeal.data.meals[0]);
+          // e.target.dataset.id
+        };
+
+        // Code runs if function is executed for the purposes of the search feature.
+      } else if (state === "search") {
+        clickHandler = async (e) => {
+          let meal = data.filter(
+            (content) => content.strMeal === e.target.dataset.id
+          );
+          let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+          console.log(specificMeal.data.meals[0]);
+          reloadSequence(async () => {
+            setSingleRecipe(specificMeal);
+            setRecipeData(specificMeal.data.meals[0]);
+            setShowSearchedRecipe(true);
+          });
+          // e.target.dataset.id
+        };
+      }
       console.log(data);
       meals = data.map((meal) => (
         <Clickable
@@ -506,7 +558,11 @@ export default function diydelight() {
         </Clickable>
       ));
       // browseContent is state that will store the JSX to be rendered.
-      setBrowseContent(meals);
+      if (state === "all" || state === "cuisine" || state === "category") {
+        setBrowseContent(meals);
+      } else if (state === "search") {
+        setSearchClickables(meals);
+      }
     } else {
       // default case: generate mealgroups from state
       let clickHandler = (e) => {
@@ -574,6 +630,11 @@ export default function diydelight() {
   useEffect(() => {
     generateClickables(browseView);
   }, [browseView]);
+
+  useEffect(() => {
+    console.log("Should generate search clickables");
+    generateClickables("search", searchResults.meals);
+  }, [searchResults]);
 
   // *************
   //     VIEWS
@@ -680,36 +741,19 @@ export default function diydelight() {
           </RecipeDisplay>
         );
       }
-
-      getSearchView = () => {
-        return (
-          <SearchContainer>
-            <SearchHeading>
-              Enter the name of a dish to search the database for a recipe.
-            </SearchHeading>
-            <SearchBox>
-              <SearchInput type="text" />
-              <Button
-                bgColor={"#FC7419"}
-                color={"#FFE9E9"}
-                marginRight="auto"
-                marginLeft="auto"
-                marginTop="1rem"
-                padding={"1rem 2rem"}
-                clickHandler={() => {
-                  console.log("Searched!");
-                }}
-              >
-                Submit
-              </Button>
-              {/* <SearchButton value="Submit" type="button"></SearchButton> */}
-            </SearchBox>
-          </SearchContainer>
-        );
-      };
     }
   };
 
+  let handleSearch = async () => {
+    let result = await getSearchResult(searchTerm);
+    console.log(result);
+    if (result.data.meals && result.data.meals !== null) {
+      setSearchResults(result.data);
+    } else {
+      setSearchResults({ meals: [] });
+    }
+    console.log(searchResults);
+  };
   return (
     <Layout>
       <PageContent>
@@ -739,7 +783,11 @@ export default function diydelight() {
               };
 
               setActiveComponent("browse");
-
+              setRecipeData(false);
+              setSingleRecipe(false);
+              setBrowseView(false);
+              // setBrowseView("category");
+              setMealGroup(false);
               reloadSequence(callback).then((results) => {
                 setMealCategories(results.categories);
                 setMealCuisines(results.cuisines);
@@ -754,7 +802,15 @@ export default function diydelight() {
             thisComponent="search"
             activeComponent={activeComponent}
             onClick={() => {
-              setActiveComponent("search");
+              reloadSequence(() => {
+                setSearchTerm(false);
+                setSearchResults(false);
+                setSearchClickables(false);
+                setShowSearchedRecipe(false);
+                setSingleRecipe(false);
+                setRecipeData(false);
+                setActiveComponent("search");
+              });
             }}
           >
             Search
@@ -775,16 +831,12 @@ export default function diydelight() {
                 initial={"closed"}
                 variants={variants}
               >
-                <BrowseTabs
-                // animate={isLoading || singleRecipe ? "closed" : "open"}
-                // initial={"closed"}
-                // variants={variants}
-                >
+                <BrowseTabs>
                   <Button
                     bgColor={"#FC7419"}
                     color={"#FFE9E9"}
                     padding={".5rem 1rem"}
-                    onClick={() => setBrowseView("all")}
+                    clickHandler={() => setBrowseView("all")}
                   >
                     All
                   </Button>
@@ -792,7 +844,7 @@ export default function diydelight() {
                     bgColor={"#FC7419"}
                     color={"#FFE9E9"}
                     padding={".5rem 1rem"}
-                    onClick={() => setBrowseView("category")}
+                    clickHandler={() => setBrowseView("category")}
                     active={browseView}
                   >
                     Category
@@ -801,7 +853,9 @@ export default function diydelight() {
                     bgColor={"#FC7419"}
                     color={"#FFE9E9"}
                     padding={".5rem 1rem"}
-                    onClick={() => setBrowseView("cuisine")}
+                    clickHandler={() => {
+                      setBrowseView("cuisine");
+                    }}
                     active={browseView}
                   >
                     Cuisine
@@ -818,7 +872,82 @@ export default function diydelight() {
               </SingleRecipeView>
             </>
           ) : null}
-          {activeComponent === "search" ? getSearchView() : null}
+          {activeComponent === "search" ? (
+            <>
+              <SearchContainer
+                animate={isLoading || searchResults ? "closed" : "open"}
+                initial={"closed"}
+                variants={variants}
+              >
+                <SearchHeading>
+                  Enter the name of a dish to search the database for a recipe.
+                </SearchHeading>
+                <SearchBox>
+                  <SearchInput
+                    onChange={(event) => {
+                      setSearchTerm(event.target.value);
+                    }}
+                    type="text"
+                    onKeyDown={async (e) => {
+                      if (e.key === "Enter") {
+                        reloadSequence(handleSearch);
+                      }
+                    }}
+                  />
+                  <Button
+                    bgColor={"#FC7419"}
+                    color={"#FFE9E9"}
+                    marginRight="auto"
+                    marginLeft="auto"
+                    marginTop="1rem"
+                    padding={"1rem 2rem"}
+                    clickHandler={async () => {
+                      reloadSequence(handleSearch);
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </SearchBox>
+              </SearchContainer>
+              <SearchResultsDisplay
+                animate={
+                  isLoading || !searchResults || showSearchedRecipe
+                    ? "closed"
+                    : "open"
+                }
+                initial={"closed"}
+                variants={variants}
+              >
+                <SearchResultsHeading>
+                  <SearchHeadingText>
+                    {searchResults ? (
+                      <>
+                        <RedText>{searchResults.meals.length} </RedText> results
+                        found for <RedText>'{searchTerm}'</RedText>
+                      </>
+                    ) : null}
+                  </SearchHeadingText>
+                  <SearchReturn>
+                    Go Back? <AiOutlineArrowLeft size={35} />
+                  </SearchReturn>
+                </SearchResultsHeading>
+                <ClickableGrid>
+                  {searchResults ? searchClickables : ""}
+                </ClickableGrid>
+              </SearchResultsDisplay>
+              <SearchedRecipeWindow
+                animate={
+                  isLoading || !searchResults || !showSearchedRecipe
+                    ? "closed"
+                    : "open"
+                }
+                initial={"closed"}
+                variants={variants}
+              >
+                {!isLoading && showSearchedRecipe ? getRecipeView() : null}
+              </SearchedRecipeWindow>
+            </>
+          ) : null}
         </RecipeContainer>
       </PageContent>
     </Layout>

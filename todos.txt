@@ -1,10 +1,12 @@
 ***Major***
 1. Browse feature yet to be fully implemented.
 
-2. Search feature yet to be implemented.
+2. Search feature yet to be fully implemented.
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
 2. Browse needs a back button to support better browsing. 
+3. When searching, if you search and again click to the search feature it clears data but not the input field, creating a situation where you
+may search again for the same term but it will yield no results because the search term is not in state.. despite appearing on screen. 
 ***Bugs***
 
 1. Page content not appopriately sized on 1920x1080 monitor, scrollbar shows in ugly fashion. 
