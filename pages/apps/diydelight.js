@@ -52,6 +52,7 @@ const AppNavLink = styled.a`
   transition: all 0.2s;
   font-size: 1.25rem;
   margin: 0 0.5rem 0 0.5rem;
+  cursor: pointer;
   color: ${(props) =>
     props.activeComponent === props.thisComponent ? "#D94A4A" : "#241C1C"};
   @media screen and (min-width: 750px) {
@@ -250,7 +251,9 @@ const Clickable = styled.div`
   background-color: #d94a4a;
   color: #ffe9e9;
   text-align: center;
-  @media screen and (min-width: 900) {
+  cursor: pointer;
+
+  @media screen and (min-width: 900px) {
     padding: 1rem 1.5rem;
   }
 `;
@@ -261,9 +264,10 @@ const ClickableGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 0.5rem;
   margin-bottom: auto;
-  margin-top: 3rem;
-  max-height: 80vh;
-  @media screen and (min-width: 900) {
+
+  @media screen and (min-width: 900px) {
+    margin-top: 3rem;
+    max-height: 80vh;
     padding: 5rem;
     grid-template-columns: repeat(6, 1fr);
   }
@@ -737,14 +741,8 @@ export default function diydelight() {
   //     VIEWS
   // *************
 
-  // RANDOM RECIPE VIEW
-  let recipeView,
-    getSearchView,
-    singleRecipeMobile,
-    singleRecipeDesktop,
-    getRecipeView;
-
-  getRecipeView = (includeBackButton = false, backArrowFn = false) => {
+  // RECIPE VIEW
+  let getRecipeView = (includeBackButton = false, backArrowFn = false) => {
     if (typeof window !== "undefined") {
       // determine desktop or mobile view
       if (window.innerWidth > 750) {
@@ -851,6 +849,19 @@ export default function diydelight() {
             >
               New Random Recipe
             </Button>
+            {includeBackButton ? (
+              <Button
+                bgColor={"#ffffff"}
+                color={"#241c1c"}
+                marginRight="auto"
+                marginLeft="auto"
+                marginTop="1rem"
+                padding={"1rem 2rem"}
+                clickHandler={backArrowFn ? backArrowFn : ""}
+              >
+                <BackArrow size={20} /> Go Back
+              </Button>
+            ) : null}
           </RecipeDisplay>
         );
       }

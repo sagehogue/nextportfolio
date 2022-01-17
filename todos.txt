@@ -2,16 +2,16 @@
 
 
 1. Browse feature yet to be fully implemented.
-    a. Back (from single recipe view to selected category view) function not implemented.
+    a. Should add a back button to reselect category or cuisine if you don't like your choice of meals. 
 
-2. There is A LOT of page jiggle going on as things are resized on render. Reserving space in the visual hierarchy for them should fix this.
-
-3. Search feature yet to be fully implemented.
-    a. If no results are found, a "go back" button should be presented.
+2. Search feature yet to be fully implemented.
+    a. If no results are found, a "go back" button should be presented. Currently there is one but it has no functionality. 
     b. If you check out a recipe, you should be able to press "back" and have the search results presented again without having to make a second
     search.
+    c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
+    text in it. All I need to do is clear the input box when the user leaves the component.
+    d. Animation is broken if you go from a searched recipe to the search main screen again. exit and enter animations occur simultaneously.
 
-4. Hugely lacking in the "mobile optimization" department. Like everything is just fucked, I haven't even looked in detail. 
 
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
@@ -32,11 +32,12 @@ the animations having different triggers. Whoops.
 
 ***Bugs***
 
-1. Page content not appopriately sized on 1920x1080 monitor, scrollbar shows in ugly fashion. 
-2. The page content is not properly centered on mobile. 
 
 
 ***COMPLETE/SOLVED***
+* Buttons DO NOT show pointer when hovered. 
+* Hugely lacking in the "mobile optimization" department. Like everything is just fucked, I haven't even looked in detail. 
+* There is A LOT of page jiggle going on as things are resized on render. Reserving space in the visual hierarchy for them should fix this.
 * The loader symbol presented when data is fetching is not properly centered in mobile or desktop.
 *  Categories are shifting when loader is on screen. 
 * I need a generic page window for the browse/random recipe. Something to handle transitioning in/out when content is to be changed
