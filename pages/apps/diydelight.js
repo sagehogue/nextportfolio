@@ -294,6 +294,10 @@ let RedText = styled.span`
   color: #d94a4a;
 `;
 
+const BackArrow = styled(AiOutlineArrowLeft)`
+  transform: translateY(0.22rem) scale(1.2);
+`;
+
 export default function diydelight() {
   // *************
   // DATA / STATE
@@ -648,7 +652,7 @@ export default function diydelight() {
     singleRecipeDesktop,
     getRecipeView;
 
-  getRecipeView = () => {
+  getRecipeView = (includeBackButton = false, backArrowFn = false) => {
     if (typeof window !== "undefined") {
       // determine desktop or mobile view
       if (window.innerWidth > 750) {
@@ -686,6 +690,19 @@ export default function diydelight() {
                 >
                   New Random Recipe
                 </Button>
+                {includeBackButton ? (
+                  <Button
+                    bgColor={"#ffffff"}
+                    color={"#241c1c"}
+                    marginRight="auto"
+                    marginLeft="auto"
+                    marginTop="1rem"
+                    padding={"1rem 2rem"}
+                    clickHandler={backArrowFn ? backArrowFn : ""}
+                  >
+                    <BackArrow size={20} /> Go Back
+                  </Button>
+                ) : null}
               </DesktopInstructions>
               <IngredientTable>
                 <IngredientTableLabels>
@@ -869,7 +886,11 @@ export default function diydelight() {
                 initial={"closed"}
                 variants={variants}
               >
-                {!isLoading && singleRecipe ? getRecipeView() : null}
+                {!isLoading && singleRecipe
+                  ? getRecipeView(true, () => {
+                      setSingleRecipe(false);
+                    })
+                  : null}
               </SingleRecipeView>
             </>
           ) : null}
@@ -928,9 +949,9 @@ export default function diydelight() {
                       </>
                     ) : null}
                   </SearchHeadingText>
-                  {/* <SearchReturn>
+                  <SearchReturn>
                     Go Back? <AiOutlineArrowLeft size={35} />
-                  </SearchReturn> */}
+                  </SearchReturn>
                 </SearchResultsHeading>
                 <ClickableGrid>
                   {searchResults ? searchClickables : ""}
@@ -945,7 +966,11 @@ export default function diydelight() {
                 initial={"closed"}
                 variants={variants}
               >
-                {!isLoading && showSearchedRecipe ? getRecipeView() : null}
+                {!isLoading && showSearchedRecipe
+                  ? getRecipeView(true, () => {
+                      setShowSearchedRecipe(false);
+                    })
+                  : null}
               </SearchedRecipeWindow>
             </>
           ) : null}

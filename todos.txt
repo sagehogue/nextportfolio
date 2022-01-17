@@ -1,17 +1,37 @@
 ***Major***
+
+
 1. Browse feature yet to be fully implemented.
     a. Back (from single recipe view to selected category view) function not implemented.
 
-2. Search feature yet to be fully implemented.
+2. There is A LOT of page jiggle going on as things are resized on render. Reserving space in the visual hierarchy for them should fix this.
+
+3. Search feature yet to be fully implemented.
+    a. If no results are found, a "go back" button should be presented.
+    b. If you check out a recipe, you should be able to press "back" and have the search results presented again without having to make a second
+    search.
+
+4. Hugely lacking in the "mobile optimization" department. Like everything is just fucked, I haven't even looked in detail. 
+
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
+
 2. Browse needs a back button to support better browsing. 
+
 3. When searching, if you search and again click to the search feature it clears data but not the input field, creating a situation where you
 may search again for the same term but it will yield no results because the search term is not in state.. despite appearing on screen. 
+
+4. I should create an option on the loader function to sequence two views without showing the loader in between, for when I need to change the
+view but I do not need to perform any asynchronous actions. 
+
+5. The search "back button" animations are kinda fucked, we're missing an exit animation for the single recipe view -> search result movement.
+
+
 ***Bugs***
 
 1. Page content not appopriately sized on 1920x1080 monitor, scrollbar shows in ugly fashion. 
 2. The page content is not properly centered on mobile. 
+
 
 ***COMPLETE/SOLVED***
 * The loader symbol presented when data is fetching is not properly centered in mobile or desktop.
