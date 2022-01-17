@@ -26,6 +26,9 @@ view but I do not need to perform any asynchronous actions.
 
 5. The search "back button" animations are kinda fucked, we're missing an exit animation for the single recipe view -> search result movement.
 
+6. Animations are pretty fucked. I think I'm using the package wrong, I don't think I need variants. Some refactor will be necessary to deal with
+the animations having different triggers. Whoops. 
+
 
 ***Bugs***
 
