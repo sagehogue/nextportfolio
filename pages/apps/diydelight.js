@@ -64,9 +64,12 @@ const AppNavLink = styled.a`
 
 const RecipeContainer = styled.div`
   background-color: #fcf0e8;
-  min-height: 80vh;
+  min-height: 85vh;
   margin-top: auto;
   display: flex;
+  @media screen and (min-width: 900px) {
+    min-height: 80vh;
+  }
 `;
 const DesktopRecipeDisplay = styled(motion.div)`
   display: flex !important;
@@ -162,10 +165,11 @@ const IngredientTable = styled.div`
   display: flex;
   flex-direction: column;
   padding: 1rem 0 1rem 0;
-  width: 15vw;
+  width: 100vw;
   @media screen and (min-width: 1100px) {
     grid-template-columns: 7.5vw 7.5vw;
     max-height: 80vh;
+    width: 15vw;
   }
 `;
 const IngredientTableLabels = styled.div`
@@ -224,28 +228,45 @@ const BrowseContainer = styled(motion.div)`
   width: 100%;
   justify-content: space-around;
   align-items: center;
+  min-height: 85vh;
 `;
 
 const BrowseTabs = styled.div`
   display: flex;
+  & button {
+    flex-grow: 1;
+  }
   margin-right: auto;
   // margin-bottom: auto;
+  @media screen and (min-width: 900px) {
+    & button {
+      flex-grow: 0;
+    }
+  }
 `;
 
 const Clickable = styled.div`
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 0.75rem;
   background-color: #d94a4a;
   color: #ffe9e9;
   text-align: center;
+  @media screen and (min-width: 900) {
+    padding: 1rem 1.5rem;
+  }
 `;
 const ClickableGrid = styled.div`
-  padding: 5rem;
+  padding: 0.5rem;
   display: grid;
   /* define the number of grid columns */
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 0.5rem;
   margin-bottom: auto;
   margin-top: 3rem;
+  max-height: 80vh;
+  @media screen and (min-width: 900) {
+    padding: 5rem;
+    grid-template-columns: repeat(6, 1fr);
+  }
 `;
 
 const CategoryButton = styled(Button)`
@@ -258,17 +279,40 @@ const CuisineButton = styled(Button)``;
 const SearchContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
-  margin: auto;
+  margin: 2rem auto auto auto
   color: #241c1c;
+  @media screen and (min-width: 900px) {
+    margin: auto;
+  
+  }
 `;
 const SearchHeading = styled.h2`
+  // display: flex;
   color: #d94a4a;
   text-align: center;
+  max-width: 90%;
+  margin: 1rem auto 1rem auto;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  letter-spacing: 0.5px;
+  @media screen and (min-width: 900px) {
+    max-width: 100%;
+    font-size: 2rem;
+  }
 `;
-const SearchBox = styled.div``;
+const SearchBox = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 const SearchInput = styled.input`
-  min-width: 30vw;
-  padding: 0.5rem 1rem;
+  min-width: 75vw;
+  padding: 0.25rem 0.5rem;
+  margin: 0.5rem auto 0.5rem auto;
+
+  @media screen and (min-width: 900px) {
+    min-width: 30vw;
+    padding: 0.5rem 1rem;
+  }
   border: none;
   color: #241c1c;
 `;
