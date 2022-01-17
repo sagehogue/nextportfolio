@@ -16,18 +16,7 @@
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
 
-2. Browse needs a back button to support better browsing. 
-
-3. When searching, if you search and again click to the search feature it clears data but not the input field, creating a situation where you
-may search again for the same term but it will yield no results because the search term is not in state.. despite appearing on screen. 
-
-4. I should create an option on the loader function to sequence two views without showing the loader in between, for when I need to change the
-view but I do not need to perform any asynchronous actions. 
-
-5. The search "back button" animations are kinda fucked, we're missing an exit animation for the single recipe view -> search result movement.
-
-6. Animations are pretty fucked. I think I'm using the package wrong, I don't think I need variants. Some refactor will be necessary to deal with
-the animations having different triggers. Whoops. 
+2. The search "back button" animations are kinda fucked, we're missing an exit animation for the single recipe view -> search result movement.
 
 
 ***Bugs***
@@ -48,3 +37,7 @@ not necessary.
 the "getSpecificRecipe" function. Next up is to ensure the data is properly rendered onto the user's screen, and that all state is properly
 set so that there will not be any unexpected behavior. 
 * "Single recipe view" should be created and shared between random recipe and a recipe reached through the browse menu.
+* I should create an option on the loader function to sequence two views without showing the loader in between, for when I need to change the
+view but I do not need to perform any asynchronous actions. 
+* Animations are pretty fucked. I think I'm using the package wrong, I don't think I need variants. Some refactor will be necessary to deal with
+the animations having different triggers. Whoops. 
