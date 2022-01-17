@@ -583,7 +583,8 @@ export default function diydelight() {
             return res;
           })
           .then((res) => {
-            generateClickables(false, res.data.meals);
+            console.log(browseView);
+            generateClickables(browseView, res.data.meals);
           })
           .catch((err) => console.log(err));
       };
@@ -927,9 +928,9 @@ export default function diydelight() {
                       </>
                     ) : null}
                   </SearchHeadingText>
-                  <SearchReturn>
+                  {/* <SearchReturn>
                     Go Back? <AiOutlineArrowLeft size={35} />
-                  </SearchReturn>
+                  </SearchReturn> */}
                 </SearchResultsHeading>
                 <ClickableGrid>
                   {searchResults ? searchClickables : ""}

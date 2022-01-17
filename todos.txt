@@ -1,5 +1,6 @@
 ***Major***
 1. Browse feature yet to be fully implemented.
+    a. Back (from single recipe view to selected category view) function not implemented.
 
 2. Search feature yet to be fully implemented.
 ***Minor***
