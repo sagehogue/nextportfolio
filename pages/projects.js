@@ -11,9 +11,12 @@ import Button from "../components/Button/Button";
 import styles from "../styles/Pages/about.module.css";
 import styled from "styled-components";
 
+import PyaramidMenu from "../components/Effects/PyramidMenu/PyramidMenu";
+
 import Ghosty from "../public/Ghosty-surprise.svg";
 import GalleryIcon from "../public/image-gallery-icon-fixed.svg";
 import RecipeIcon from "../public/recipe-app-icon.svg";
+import PyramidMenu from "../components/Effects/PyramidMenu/PyramidMenu";
 
 const ContentHeading = styled.h1`
   font-size: 1.75rem;
@@ -53,6 +56,15 @@ padding-right: 0.5rem;
 padding-bottom: 0.45rem;
   background-color: ${(props) =>
     props.category === "websites" ? "var(--color-highlight)" : "transparent"};
+  @media screen and (min-width: 1400px) {
+  padding-bottom: 0.5rem;
+  padding-right: 0.85rem;
+`;
+const EffectsLabel = styled(Label)`
+padding-right: 0.5rem;
+padding-bottom: 0.45rem;
+  background-color: ${(props) =>
+    props.category === "effects" ? "var(--color-highlight)" : "transparent"};
   @media screen and (min-width: 1400px) {
   padding-bottom: 0.5rem;
   padding-right: 0.85rem;
@@ -112,7 +124,14 @@ const Entry = styled.li`
     flex-direction: row;
   }
 `;
-
+const EffectWindow = styled.div`
+  display: flex;
+  min-width: 35vw;
+  min-height: 25vh;
+  & > div {
+    margin: auto;
+  }
+`;
 const Name = styled.h3`
   cursor: pointer;
   margin: 0;
@@ -233,6 +252,21 @@ export default function Projects() {
     },
   ];
 
+  const effects = [
+    {
+      JSX: <PyramidMenu />,
+      name: "Pyramid Menu",
+      description: "Made a menu out of pyramids/triangles. Hope it went well.",
+    },
+    // {
+
+    //   name: "sarahmakes.art",
+    //   description:
+    //     "This website is an art gallery to display this artist's collages. It's a static site made with Gatsby. Thanks for being my first client Sarah!",
+    //   url: "https://sarahmakes.art/",
+    // },
+  ];
+
   const AppList = apps.map((app, index) => {
     return (
       <Entry key={index}>
@@ -268,7 +302,19 @@ export default function Projects() {
       </Entry>
     );
   });
-  console.log(AppList);
+  const EffectList = effects.map((effect) => {
+    return (
+      <Entry>
+        <EffectWindow>{effect.JSX}</EffectWindow>
+        <TextContent>
+          {/* <Link href={site.url}> */}
+          <Name>{effect.name}</Name>
+          {/* </Link> */}
+          <Description>{effect.description}</Description>
+        </TextContent>
+      </Entry>
+    );
+  });
   return (
     <Page>
       <Head>
@@ -300,6 +346,16 @@ export default function Projects() {
             {" "}
             Websites
           </WebsitesLabel>
+          <Divider>/</Divider>
+          <EffectsLabel
+            category={selectedCategory}
+            onClick={() => {
+              setSelectedCategory("effects");
+            }}
+          >
+            {" "}
+            Effects
+          </EffectsLabel>
         </ContentHeading>
         <ContentContainer>
           {selectedCategory === "apps"
@@ -309,6 +365,10 @@ export default function Projects() {
             : selectedCategory === "websites"
             ? websites.length
               ? WebsiteList
+              : ContentNotFound
+            : selectedCategory === "effects"
+            ? EffectList.length
+              ? EffectList
               : ContentNotFound
             : null}
         </ContentContainer>
