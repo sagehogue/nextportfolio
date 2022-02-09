@@ -1,3 +1,19 @@
+==========
+Portfolio
+==========
+***Major***
+
+Contact form doesn't work
+
+***Minor***
+
+***Bugs***
+
+***COMPLETE/SOLVED***
+
+==========
+DIYDELIGHT
+==========
 ***Major***
 
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
@@ -342,6 +342,16 @@ let SearchHeadingText = styled.h2`
 
 let SearchReturn = styled.h4`
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #D94A4A;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  width: 13.75rem;
+  margin: auto;
+  position: relative;
 `;
 
 let SearchResultsDisplay = styled(motion.div)`
@@ -357,6 +367,12 @@ let RedText = styled.span`
 
 const BackArrow = styled(AiOutlineArrowLeft)`
   transform: translateY(0.22rem) scale(1.2);
+`;
+
+const SearchBackArrow = styled(AiOutlineArrowLeft)`
+position: absolute;
+left: 1rem;
+top: .1rem;
 `;
 
 export default function diydelight() {
@@ -413,6 +429,14 @@ export default function diydelight() {
   let [searchClickables, setSearchClickables] = useState(false);
   let [showSearchedRecipe, setShowSearchedRecipe] = useState(false);
 
+
+
+  // *************
+  //     REFS
+  // *************
+
+  let searchInputRef = React.createRef();
+  
   // *************
   //   FUNCTIONS
   // *************
@@ -882,7 +906,9 @@ export default function diydelight() {
   return (
     <Layout>
       <PageContent>
+        {/* Red Title Lettering */}
         <AppHeading>DIY Delight</AppHeading>
+        {/* Main Navigation for App */}
         <AppNav>
           <AppNavLink
             thisComponent="random"
@@ -930,13 +956,21 @@ export default function diydelight() {
             onClick={() => {
               loadSequence(
                 () => {
+                  const node = searchInputRef.current
+                  if (searchTerm) {
+                    console.log(node)
+                    node.value = ''
+                  }
+                  
                   setSearchTerm(false);
+                
                   setSearchResults(false);
                   setSearchClickables(false);
                   setShowSearchedRecipe(false);
                   setSingleRecipe(false);
                   setRecipeData(false);
                   setActiveComponent("search");
+                 
                 },
                 false,
                 false
@@ -946,7 +980,9 @@ export default function diydelight() {
             Search
           </AppNavLink>
         </AppNav>
+        {/* This is where the meat of page content is displayed. Recipes, loaders, and menus are down here.  */}
         <RecipeContainer>
+          {/* This is the spinner that displays while async operations are in effect. */}
           <LoaderContainer
             animate={loaderAnimControls}
             variants={LoaderVariants}
@@ -954,6 +990,7 @@ export default function diydelight() {
           >
             <Loader />
           </LoaderContainer>
+          {/* Logic below determines which app view to provide the user. Random, Browse, Search, or Single Recipe view */}
           {activeComponent === "random" && recipeData ? getRecipeView() : null}
           {activeComponent === "browse" ? (
             <>
@@ -999,6 +1036,7 @@ export default function diydelight() {
                     >
                       Cuisine
                     </CuisineButton>
+                    {/* 'Clickables' are either categories, cuisines, or specific recipe names. The corresponding data will be loaded when a clickable is clicked. */}
                   </BrowseTabs>
                   <ClickableGrid>{browseContent}</ClickableGrid>
                 </BrowseContainer>
@@ -1036,8 +1074,10 @@ export default function diydelight() {
                 </SearchHeading>
                 <SearchBox>
                   <SearchInput
+                  ref={searchInputRef}
                     onChange={(event) => {
                       setSearchTerm(event.target.value);
+                      
                     }}
                     type="text"
                     onKeyDown={async (e) => {
@@ -1080,8 +1120,18 @@ export default function diydelight() {
                       </>
                     ) : null}
                   </SearchHeadingText>
-                  <SearchReturn>
-                    Go Back? <AiOutlineArrowLeft size={35} />
+                  <SearchReturn onClick={() => { const node = searchInputRef.current
+                                setSearchTerm(false);
+                
+                                setSearchResults(false);
+                                setSearchClickables(false);
+                                setShowSearchedRecipe(false);
+                                setSingleRecipe(false);
+                                setRecipeData(false);
+                                setActiveComponent("search");
+                  node.value = ''
+                  node.focus()}}>
+                  <SearchBackArrow size={35} /> Go Back? 
                   </SearchReturn>
                 </SearchResultsHeading>
                 <ClickableGrid>

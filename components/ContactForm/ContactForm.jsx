@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
 const Form = styled.form`
@@ -72,7 +73,7 @@ const FormInput = styled.input`
   }
 `;
 
-const TextArea = styled.textarea`
+const TextArea = styled.input`
   height: 25vh;
   width: 100%;
   transition: all 0.2s;
@@ -84,13 +85,22 @@ const TextArea = styled.textarea`
 `;
 
 export default function ContactForm() {
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm();
+
+
+  const onSubmit = (data) => {
+    console.log(data)
     console.log(`Submitted form data: 
         Name: ${name}
         subject: ${subject}
         email: ${email}
         message: ${message}`);
+    // function runs after successful validation and actually send email
   };
   let [name, setName] = useState("");
   let [subject, setSubject] = useState("");
@@ -115,7 +125,8 @@ export default function ContactForm() {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      {/* register your input into the hook by invoking the "register" function */}
       <FormContentWrapper>
         <FormEntry>
           Name
@@ -124,7 +135,9 @@ export default function ContactForm() {
             type="text"
             required
             value={name}
+            {...register("name", { required: true })}
             onChange={(e) => handleFormChange(e, "name")}
+            
           ></FormInput>
         </FormEntry>
         <FormEntry>
@@ -134,7 +147,9 @@ export default function ContactForm() {
             type="text"
             required
             value={subject}
+            {...register("subject", { required: true })}
             onChange={(e) => handleFormChange(e, "subject")}
+            
           ></FormInput>
         </FormEntry>
         <FormEntry>
@@ -144,16 +159,21 @@ export default function ContactForm() {
             type="text"
             required
             value={email}
+            {...register("email", { required: true })}
             onChange={(e) => handleFormChange(e, "email")}
           ></FormInput>
+          {errors.emailRequired && <p>This field is required</p>}
         </FormEntry>
         <FormEntry>
           Message
           <br />
           <TextArea
+          type="textarea"
             value={message}
+            {...register("message", { required: true })}
             onChange={(e) => handleFormChange(e, "message")}
           />
+          {errors.messageRequired && <p>This field is required</p>}
         </FormEntry>
         <SubmitButton
           type="submit"
