@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,} from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
@@ -93,6 +93,7 @@ export default function ContactForm() {
   } = useForm();
 
 
+
   const onSubmit = (data) => {
     console.log(data)
     console.log(`Submitted form data: 
@@ -135,6 +136,7 @@ export default function ContactForm() {
             type="text"
             required
             value={name}
+            autoFocus
             {...register("name", { required: true })}
             onChange={(e) => handleFormChange(e, "name")}
             

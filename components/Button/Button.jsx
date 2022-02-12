@@ -11,8 +11,8 @@ const ButtonStyle = styled.button`
     props.bgColor ? props.bgColor : "var(--color-3)"};
   color: ${(props) => (props.color ? props.color : "var(--color-offwhite)")};
   font-weight: 700;
-  font-size: 18px;
   border: none;
+  font-size: 18px;
   padding: ${(props) => (props.padding ? props.padding : "2rem 5rem")};
   margin: ${(props) => (props.marginTop ? props.marginTop : "0")}
     ${(props) => (props.marginRight ? props.marginRight : "0")}
@@ -22,8 +22,8 @@ const ButtonStyle = styled.button`
   cursor: pointer;
   position: relative;
   transition: all 0.2s;
-  &:hover {
-    box-shadow: 0px 0px 10px 5px var(--color-2);
+  &:hover { 
+    color: ${props => props.hoverColor? props.hoverColor : `var(--color-2)`};
   }
 `;
 
@@ -48,12 +48,9 @@ export default function Button({
   marginLeft = false,
   mAuto = false,
   clickHandler = false,
+  hoverColor=false
 }) {
-  // let classes = [
-  //   styles.button,
-  //   cta ? styles.cta : "",
-  //   marginRight ? styles.marginRight : "",
-  // ];
+  console.log(hoverColor)
   if (link) {
     return (
       <Link href={link}>
@@ -66,27 +63,30 @@ export default function Button({
           bgColor={bgColor}
           color={color}
           padding={padding}
+          hoverColor={hoverColor}
         >
           {children}
         </ButtonStyle>
       </Link>
     );
-  } else {
-  }
-  return (
-    <ButtonStyle
-      mAuto={mAuto}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
-      marginLeft={marginLeft}
-      marginRight={marginRight}
-      type="button"
-      bgColor={bgColor}
-      color={color}
-      padding={padding}
-      onClick={clickHandler ? clickHandler : null}
-    >
-      {children}
-    </ButtonStyle>
-  );
+  }else {
+
+    return (
+      <ButtonStyle
+        mAuto={mAuto}
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        marginLeft={marginLeft}
+        marginRight={marginRight}
+        type="button"
+        bgColor={bgColor}
+        color={color}
+        padding={padding}
+        hoverColor={hoverColor}
+        onClick={clickHandler ? clickHandler : null}
+      >
+        {children}
+      </ButtonStyle>
+    );
+  } 
 }

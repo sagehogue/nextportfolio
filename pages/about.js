@@ -96,18 +96,21 @@ export default function About() {
           <Frame bringCenter horizontalCenter verticalCenter width={textWidth}>
             <Headline>Who is he?</Headline>
             <Paragraph width={textWidth}>
-              I got my start in 2018 at PDXCodeGuild, a Portland full-stack
-              coding bootcamp. There I first got into coding servers (in Python)
-              as well as learned my love language, JavaScript.
+              I'm a web developer and entrepreneur raised and living in Portland, OR. Professionally I make websites and apps for individuals & small businesses locally and through
+              my online presence on freelance platforms such as freelance.com.
+            </Paragraph>
+            <Paragraph width={textWidth}>
+              I began my webdev journey in 2018 at PDXCodeGuild, a Portland
+              coding academy. There I learned how to use python, html, css, and JavaScript to create fully functional web apps. Soon after I discovered React and took to it like a fish to water.
             </Paragraph>
             <Spacer />
-            <Paragraph width={textWidth}>
+            {/* <Paragraph width={textWidth}>
               {" "}
               Since then I've been sharpening my skills, studying everything
               from architecture patterns to color theory. Now I create
               beautiful, modern websites, making them accessible for small
               businesses and individuals.
-            </Paragraph>
+            </Paragraph> */}
           </Frame>
         </PageContentHeight>
       </Wrapper>

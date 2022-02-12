@@ -1,2 +1,8 @@
 1. Color scheme somewhat ugly.
 2. Resolution of images is sort of low.. could use a smaller dish image and use the extra space for a wider instruction display. 
+
+---
+DIYDELIGHT
+---
+1. Colors are a bit garish, especially in mobile mode. The bright orange buttons.. woah.
+2. Animation of page enter/exit is rather ugly. Looks rushed and unnatural.

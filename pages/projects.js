@@ -210,7 +210,8 @@ const CTAText = styled.span`
   text-align: center;
   color: var(--color-offwhite);
   font-weight: 700;
-  margin: auto auto 0.25rem auto;
+  margin: auto auto 0 auto;
+  padding: 5px;
 `;
 
 export default function Projects() {

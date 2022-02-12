@@ -117,11 +117,11 @@ export default function Home() {
             {paragraph1}
             <div className={styles.spacer} />
             <Paragraph small index>
-              <Highlight>Databases </Highlight>,
-              <Highlight>web design </Highlight>
+              <Highlight>Databases</Highlight>,
+              <Highlight> web design</Highlight>
               , <br />
-              <Highlight>development </Highlight>,
-              <Highlight>hosting </Highlight>, <br />& more. I do it all.
+              <Highlight> development</Highlight>,
+              <Highlight> hosting</Highlight>, <br />& more. I do it all.
             </Paragraph>
           </div>
           {/* </div> */}
@@ -132,6 +132,8 @@ export default function Home() {
               bgColor={"var(--color-2)"}
               color={"var(--color-black)"}
               link="/projects"
+              hoverColor={`var(--color-white)`}
+
             >
               My Work
             </Button>
@@ -155,6 +157,7 @@ export default function Home() {
                     bgColor={"var(--color-2)"}
                     color={"var(--color-black)"}
                     link="/projects"
+                    hoverColor={`var(--color-white)`}
                   >
                     My Work
                   </Button>

@@ -58,29 +58,27 @@ export default function Services() {
         <VerticalAligningContainer>
           <Headline>What I can do for you</Headline>
           <Grouper>
-            <ParagraphHeadline>Websites</ParagraphHeadline>
-            <Paragraph>
-              From the humble blog to professional websites and online stores -
-              I do it all! My specialty is working with independent artists and
-              small business owners to provide them an affordable and high
-              quality online presence to drive sales.
-            </Paragraph>
-          </Grouper>
-          <Grouper>
             <ParagraphHeadline>Designs</ParagraphHeadline>
             <Paragraph>
               Perhaps you already have a site, but it's feeling a little out of
-              date. I can provide a modern redesign & revamp your site with the
+              date. Or maybe you are planning your online presence but are not yet ready to go live. I can provide a modern (re)design, equipping your business with the
               latest UX/UI techniques to leave your customers impressed.
             </Paragraph>
           </Grouper>
           <Grouper>
+            <ParagraphHeadline>Websites</ParagraphHeadline>
+            <Paragraph>
+              In the modern era every small business, independent professional, and artist needs a sleek and current online presence to drive sales and grow the customer base.
+            </Paragraph>
+          </Grouper>
+          
+          {/* <Grouper>
             <ParagraphHeadline>Apps</ParagraphHeadline>
             <Paragraph>
               Did you have your once in a lifetime idea and need some assistance
               constructing it? I can certainly help you do that.
             </Paragraph>
-          </Grouper>
+          </Grouper> */}
           <Grouper>
             <ParagraphHeadline>Microservices</ParagraphHeadline>
             <Paragraph>

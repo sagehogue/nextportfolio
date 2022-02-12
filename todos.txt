@@ -1,11 +1,27 @@
+* Create a workflow section where you break down your conceptualization, design, and development processes with some pictures.
+* In the contact section, create a way to make a google calendar appointment - setting the meeting on both our google calendars and saving their contact info.. and
+emailing me to inform me. 
+* Redo SVG on main screen - it loads too slowly
+
 ==========
 Portfolio
 ==========
 ***Major***
 
-Contact form doesn't work
+1. Contact form doesn't work.
+2. About, Services, Contact all lack graphics and polish.
+3. Services section is extremely vague, untargeted.
+4. Home page graphic loads unacceptably slowly. Perhaps a new one is needed. A recreation? If I clean it up I could create more graphics to make more of an interesting theme.
+Difficult to read the image on mobile too. 
+5. Viewing projects page on mobile, bottom list item will have an unreadable description because of Call to action blocking visibility. add dead space to bottom in mobile.
 
 ***Minor***
+
+1. Ugly side scroll bar is visible on Projects lists. 
+2. No animation when switching categories on the projects page. 
+3. Home page - hover effect on the buttons is clipped on bottom - perhaps change it to a bg-color change effect or something
+4. local to global? or maybe "get connected" is better or something.
+5. /services - Low contrast of visual elements
 
 ***Bugs***
 
@@ -21,7 +37,7 @@ DIYDELIGHT
     a. Should add a back button to reselect category or cuisine if you don't like your choice of meals. 
 
 2. Search feature yet to be fully implemented.
-    a. If no results are found, a "go back" button should be presented. Currently there is one but it has no functionality. 
+    a. Lots of animations are broken. Animation when clicking back button is broken. Page Jumps.
     b. If you check out a recipe, you should be able to press "back" and have the search results presented again without having to make a second
     search.
     c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
@@ -40,6 +56,7 @@ DIYDELIGHT
 
 
 ***COMPLETE/SOLVED***
+(search)a. If no results are found, a "go back" button should be presented. Currently there is one but it has no functionality. 
 * Buttons DO NOT show pointer when hovered. 
 * Hugely lacking in the "mobile optimization" department. Like everything is just fucked, I haven't even looked in detail. 
 * There is A LOT of page jiggle going on as things are resized on render. Reserving space in the visual hierarchy for them should fix this.
