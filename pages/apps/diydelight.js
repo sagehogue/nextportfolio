@@ -256,6 +256,8 @@ const Clickable = styled.div`
     padding: 1rem 1.5rem;
   }
 `;
+const AnimateGrid = styled(motion.div)``;
+
 const ClickableGrid = styled.div`
   padding: 0.5rem;
   display: grid;
@@ -385,6 +387,61 @@ export default function diydelight() {
   // *************
 
   //  APP STATE / DATA
+
+  let resetState = (view) => {
+    setMealCuisines([]);
+    setMealCategories([]);
+    setRecipeData([]);
+    setLoading(true);
+    setRecipeImg(false);
+    setMobileRecipeImg(false);
+    setRecipeInstructions(false);
+    setRecipeIngredients(false);
+    setSingleRecipe(false);
+    setBrowseView(false);
+    setBrowseContent(false);
+    setShowBrowseRecipe(false);
+    setShowBrowseClickables(false);
+    setMealGroup(false);
+    setSearchTerm(false);
+    setSearchResults(false);
+    setShowSearchClickables(false);
+    setSearchClickables(false);
+    setShowSearchedRecipe(false);
+    setSearchClickables(false);
+    // if (view === "random") {
+    //   setMealCuisines([])
+    //   setMealCategories([])
+    //   setRecipeData([])
+    //   setLoading(true)
+    //   setRecipeImg(false)
+    //   setMobileRecipeImg(false)
+    //   setRecipeInstructions(false)
+    //   setRecipeIngredients(false)
+    //   setSingleRecipe(false)
+    //   setBrowseView(false)
+    //   setBrowseContent(false)
+    //   setShowBrowseRecipe(false)
+    //   setShowBrowseClickables(false)
+    // setMealGroup(false)
+    // setSearchTerm(false)
+    // setSearchResults(false)
+    // setShowSearchClickables(false)
+    // setSearchClickables(false);
+    // setShowSearchedRecipe(false)
+    // setSearchClickables(false)
+    // } else if (view === "browse") {
+    //   setMealCuisines([]);
+    //   setMealCategories([]);
+    //   setRecipeData([]);
+    //   setLoading(true);
+    //   setRecipeImg(false);
+    //   setMobileRecipeImg(false);
+    //   setRecipeInstructions(false);
+    //   setRecipeIngredients(false);
+    //   setSingleRecipe(false);
+    // }
+  };
 
   // determines which major view is to be displayed
   let [activeComponent, setActiveComponent] = useState("random");
@@ -596,6 +653,18 @@ export default function diydelight() {
     default: { ...variants.default },
   };
 
+  const gridVariants = {
+    ...variants,
+    open: { ...variants.open },
+    closed: {
+      ...variants.closed,
+      y: "100vh",
+      transitionEnd: variants.closed.transitionEnd,
+    },
+    exit: { ...variants.exit },
+    default: { ...variants.default },
+  };
+
   // animations for the loader element
   const LoaderVariants = {
     open: { ...variants.open },
@@ -617,6 +686,9 @@ export default function diydelight() {
 
   // Browse View Controller
   const browseViewControls = useAnimation();
+
+  // Browse View Button Grid (clickables) Controller
+  const browseViewButtonGridControls = useAnimation();
 
   // Browse View Single Recipe Controller
   const browseRecipeViewController = useAnimation();
@@ -640,8 +712,8 @@ export default function diydelight() {
 
   // Controls displaying a new random recipe
   let animateGetNewRandomRecipe = async () => {
-    await getRandomRecipe();
-    await closeCurrentView();
+    let closeView = await closeCurrentView();
+    let recipe = await getRandomRecipe();
     setActiveComponent("random");
     await loaderAnimControls.start("open");
     await loaderAnimControls.start("closed");
@@ -652,49 +724,53 @@ export default function diydelight() {
   // Switches from displaying browse recipe options to displaying single recipe
   let animateBrowseViewSwitchToSingleRecipe = async (specificMeal) => {
     // Animate out old view
-
+    await browseViewControls.start("closed");
     // display none old view
 
+    await loaderAnimControls.start("open");
+    setLoading(true);
     // generate new view
+    setShowBrowseClickables(false);
+    setRecipeData(specificMeal.data.meals[0]);
+    setSingleRecipe(specificMeal);
+    await loaderAnimControls.start("closed");
+    let func = async () => {
+      return new Promise((res, rej) => {
+        setSingleRecipe(true);
+        setShowBrowseRecipe(true);
+        setLoading(false);
+        res("work plz");
+      });
+    };
+    func().then(async (res) => {
+      console.log(res);
 
-    // animate new view into screen
-
-    loadSequence(
-      () => {
-        setShowBrowseClickables(false);
-        setRecipeData(specificMeal.data.meals[0]);
-        setSingleRecipe(specificMeal);
-        return new Promise((res) => {
-          setTimeout(res, 750);
-          setSingleRecipe(true);
-          setShowBrowseRecipe(true);
-          console.log(singleRecipe, showBrowseRecipe, isLoading);
-          return;
-        });
-      },
-      true,
-      true,
-      browseViewControls,
-      browseRecipeViewController
-    ).then(() => {
-      setShowBrowseRecipe(true);
-      browseRecipeViewController.start("open");
+      console.log(singleRecipe, showBrowseRecipe, isLoading);
+      await browseRecipeViewController.start("open");
     });
   };
 
   let closeCurrentView = async () => {
     // Case RecipeView
     if ((activeComponent = "random")) {
-      return recipeViewControls.start("closed");
+      await recipeViewControls.start("closed");
+      resetState();
     }
 
     // Case BrowseView
     if ((activeComponent = "browse")) {
-      return browseViewControls.start("closed");
+      if (singleRecipe) {
+        await browseRecipeViewController.start("closed");
+        resetState();
+      } else {
+        await browseViewControls.start("closed");
+        resetState();
+      }
     }
     // Case SearchView
     if ((activeComponent = "search")) {
-      return searchViewControls.start("closed");
+      await searchViewControls.start("closed");
+      resetState();
     }
   };
 
@@ -719,10 +795,12 @@ export default function diydelight() {
       setBrowseView("category");
       setShowBrowseClickables(true);
       browseViewControls.start("open");
+      browseViewButtonGridControls.start("open");
     });
   };
 
   // More of a load function than a reload function now.. this scrolls page to top, uses loading animation, and calls async function.
+  // I should work on replacing all uses of this function. It has grown messy and hard to use so I should separate it out into more useful functions.
   let loadSequence = async (
     asyncFunction,
     scrollTop = true,
@@ -737,7 +815,7 @@ export default function diydelight() {
           top: 0,
           behavior: "smooth",
         });
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       if (exitAnimController) {
         await exitAnimController.start("closed");
@@ -817,7 +895,8 @@ export default function diydelight() {
       // Browse view - case: displaying options
     } else {
       // default case: generate mealgroups from state
-      let clickHandler = (e) => {
+      let clickHandler = async (e) => {
+        await browseViewControls.start("closed");
         let query;
 
         // actual term to query
@@ -832,9 +911,9 @@ export default function diydelight() {
         loadSequence(
           async () => await axios(query),
           true,
-          true,
-          browseViewControls,
-          browseViewControls
+          true
+          // browseViewControls,
+          // browseViewControls
         )
           .then((res) => {
             setMealGroup(res.data.meals);
@@ -843,6 +922,7 @@ export default function diydelight() {
           .then((res) => {
             console.log(browseView);
             generateClickables(browseView, res.data.meals, browseViewControls);
+            browseViewControls.start("open");
           })
           .catch((err) => console.log(err));
       };
@@ -941,8 +1021,10 @@ export default function diydelight() {
                   marginTop="1rem"
                   padding={"1rem 2rem"}
                   clickHandler={async () => {
-                    let randomRecipe = getRandomRecipe.bind(this, true);
-                    loadSequence(getRandomRecipe);
+                    // let randomRecipe = getRandomRecipe.bind(this, true);
+                    // loadSequence(getRandomRecipe);
+                    await closeCurrentView();
+                    await animateGetNewRandomRecipe();
                   }}
                 >
                   New Random Recipe
@@ -1009,8 +1091,9 @@ export default function diydelight() {
               marginLeft="auto"
               marginTop="1rem"
               padding={"1rem 2rem"}
-              clickHandler={() => {
-                loadSequence(getRandomRecipe, true);
+              clickHandler={async () => {
+                await closeCurrentView();
+                await animateGetNewRandomRecipe();
               }}
             >
               New Random Recipe
@@ -1056,9 +1139,9 @@ export default function diydelight() {
             thisComponent="random"
             activeComponent={activeComponent}
             onClick={async () => {
+              await closeCurrentView();
+              // resetState();
               await animateGetNewRandomRecipe();
-              // await loadSequence(getRandomRecipe);
-              // setActiveComponent("random");
             }}
           >
             Random Recipe
@@ -1137,7 +1220,11 @@ export default function diydelight() {
                       bgColor={"#FC7419"}
                       color={"#FFE9E9"}
                       padding={".5rem 1rem"}
-                      clickHandler={() => setBrowseView("all")}
+                      clickHandler={async () => {
+                        await browseViewButtonGridControls.start("closed");
+                        setBrowseView("all");
+                        await browseViewButtonGridControls.start("open");
+                      }}
                     >
                       All
                     </Button>
@@ -1145,8 +1232,10 @@ export default function diydelight() {
                       bgColor={"#FC7419"}
                       color={"#FFE9E9"}
                       padding={".5rem 1rem"}
-                      clickHandler={() => {
+                      clickHandler={async () => {
+                        await browseViewButtonGridControls.start("closed");
                         setBrowseView("category");
+                        await browseViewButtonGridControls.start("open");
                       }}
                       active={browseView}
                     >
@@ -1156,8 +1245,10 @@ export default function diydelight() {
                       bgColor={"#FC7419"}
                       color={"#FFE9E9"}
                       padding={".5rem 1rem"}
-                      clickHandler={() => {
+                      clickHandler={async () => {
+                        await browseViewButtonGridControls.start("closed");
                         setBrowseView("cuisine");
+                        await browseViewButtonGridControls.start("open");
                       }}
                       active={browseView}
                     >
@@ -1165,7 +1256,15 @@ export default function diydelight() {
                     </CuisineButton>
                     {/* 'Clickables' are either categories, cuisines, or specific recipe names. The corresponding data will be loaded when a clickable is clicked. */}
                   </BrowseTabs>
-                  <ClickableGrid>{browseContent}</ClickableGrid>
+                  <AnimateGrid
+                    animate={browseViewButtonGridControls}
+                    initial={"closed"}
+                    variants={gridVariants}
+                    exit={"exit"}
+                    key="clickableGrid"
+                  >
+                    <ClickableGrid>{browseContent}</ClickableGrid>
+                  </AnimateGrid>
                 </BrowseContainer>
                 {/* <SingleRecipeView
                 animate={isLoading || !singleRecipe ? "closed" : "open"}
@@ -1173,7 +1272,7 @@ export default function diydelight() {
                 variants={variants}
               > */}
 
-                {!isLoading && singleRecipe && showBrowseRecipe
+                {showBrowseRecipe
                   ? getRecipeView(
                       true,
                       () => {
@@ -1303,7 +1402,7 @@ export default function diydelight() {
                       () => {
                         setShowSearchedRecipe(false);
                         return new Promise((res) => {
-                          setTimeout(res, 750);
+                          // setTimeout(res, 750);
                         });
                       },
 

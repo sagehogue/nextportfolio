@@ -40,6 +40,8 @@ DIYDELIGHT
 
 1. Browse feature yet to be fully implemented.
     a. Should add a back button to reselect category or cuisine if you don't like your choice of meals. 
+    b. Go Back button is not fully implemented and breaks the app when clicked. Also I don't think browse state is fully cleared when navigating to other parts of the app.
+    I should create a function to clear state as desired and utilize it whenever state is changed through navigation. 
 
 2. Search feature yet to be fully implemented.
     a. Lots of animations are broken. Animation when clicking back button is broken. Page Jumps.
