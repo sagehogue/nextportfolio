@@ -14,7 +14,9 @@ Portfolio
 4. Home page graphic loads unacceptably slowly. Perhaps a new one is needed. A recreation? If I clean it up I could create more graphics to make more of an interesting theme.
 Difficult to read the image on mobile too. 
 5. Viewing projects page on mobile, bottom list item will have an unreadable description because of Call to action blocking visibility. add dead space to bottom in mobile.
-
+6. Lots of the component switching animations are partially broken, generally animating out doesn't happen. Can fix by doing a format of async funcs
+that await page generation offscreen and then change state to trigger animation in. 
+7. Currently the page is displaying a view with NO DATA INJECTED when the page first loads or is refreshed. 
 ***Minor***
 
 1. Ugly side scroll bar is visible on Projects lists. 
@@ -22,6 +24,9 @@ Difficult to read the image on mobile too.
 3. Home page - hover effect on the buttons is clipped on bottom - perhaps change it to a bg-color change effect or something
 4. local to global? or maybe "get connected" is better or something.
 5. /services - Low contrast of visual elements
+6. I may want to reorganize the projects page into "Websites & Apps" and "Components & Effects".
+7. Implementing paypal/stripe donations would be dope. 
+
 
 ***Bugs***
 
@@ -44,12 +49,18 @@ DIYDELIGHT
     text in it. All I need to do is clear the input box when the user leaves the component.
     d. Animation is broken if you go from a searched recipe to the search main screen again. exit and enter animations occur simultaneously.
 
+3. Animations should be fully implemented.
+    a. There is no exit/enter animation when switching between major components. 
+    b. Search component does not sequence properly. Click button, input disappears, loader appears, loader disappears, results appear is the desired order of events. 
+
+4. Ipad screen size is broken for recipe view
 
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
 
 2. The search "back button" animations are kinda fucked, we're missing an exit animation for the single recipe view -> search result movement.
 
+3. Recipe image does not change at the same time as the text.. should change offscreen ideally. At least the old image should go away before it appears again. 
 
 ***Bugs***
 

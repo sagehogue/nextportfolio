@@ -61,8 +61,6 @@ const AppNavLink = styled.a`
   }
 `;
 
-// const SingleRecipeView = styled(motion.section)``;
-
 const RecipeContainer = styled.div`
   background-color: #fcf0e8;
   min-height: 85vh;
@@ -73,7 +71,8 @@ const RecipeContainer = styled.div`
   }
 `;
 const DesktopRecipeDisplay = styled(motion.div)`
-  display: flex !important;
+  // display: flex !important;
+  display: flex;
 `;
 const DesktopInstructions = styled.div`
   max-width: 40vw;
@@ -344,7 +343,7 @@ let SearchReturn = styled.h4`
   text-align: center;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #D94A4A;
+  color: #d94a4a;
   display: flex;
   justify-content: center;
   text-align: center;
@@ -370,9 +369,14 @@ const BackArrow = styled(AiOutlineArrowLeft)`
 `;
 
 const SearchBackArrow = styled(AiOutlineArrowLeft)`
-position: absolute;
-left: 1rem;
-top: .1rem;
+  position: absolute;
+  left: 1rem;
+  top: 0.1rem;
+`;
+
+const BlobImage = styled.img`
+  width: 100%;
+  height: 100%;
 `;
 
 export default function diydelight() {
@@ -429,14 +433,12 @@ export default function diydelight() {
   let [searchClickables, setSearchClickables] = useState(false);
   let [showSearchedRecipe, setShowSearchedRecipe] = useState(false);
 
-
-
   // *************
   //     REFS
   // *************
 
   let searchInputRef = React.createRef();
-  
+
   // *************
   //   FUNCTIONS
   // *************
@@ -465,73 +467,86 @@ export default function diydelight() {
   };
 
   // set single recipe data
-  let loadRecipeState = (meal) => {
+  let loadRecipeState = async (meal) => {
     let ingredients = [],
       measurements = [];
-    setRecipeData(meal);
-    setRecipeImg(
-      <Image
-        src={meal.strMealThumb}
-        layout="responsive"
-        height={"25vh"}
-        width={"25vw"}
-      />
-    );
-    setMobileRecipeImg(
-      <Image
-        src={meal.strMealThumb}
-        layout="responsive"
-        height={"100vw"}
-        width={"100vw"}
-      />
-    );
-    setRecipeInstructions(
-      meal.strInstructions.split("\n").map((value, index) => {
-        return (
-          <span key={index}>
-            {value}
-            <LineBreak />
-          </span>
+    console.log(meal.strMealThumb);
+    let imagePromise = await fetch(meal.strMealThumb)
+      .then((response) => response.blob())
+      .then((imageBlob) => {
+        const imageObjectURL = URL.createObjectURL(imageBlob);
+        setRecipeImg(
+          <BlobImage
+            src={imageObjectURL}
+            layout="responsive"
+            height={"25vh"}
+            width={"25vw"}
+          />
         );
+        setMobileRecipeImg(
+          <BlobImage
+            src={imageObjectURL}
+            layout="responsive"
+            height={"100vw"}
+            width={"100vw"}
+          />
+        );
+        return imageObjectURL;
       })
-    );
-    Object.entries(result.data.meals[0]).forEach((entry) => {
-      let key = entry[0];
-      let value = entry[1];
+      .then((url) => {
+        let it = url; // useless code
+        setRecipeData(meal);
+        setRecipeInstructions(
+          meal.strInstructions.split("\n").map((value, index) => {
+            return (
+              <span key={index}>
+                {value}
+                <LineBreak />
+              </span>
+            );
+          })
+        );
+        Object.entries(result.data.meals[0]).forEach((entry) => {
+          let key = entry[0];
+          let value = entry[1];
 
-      if (
-        key.includes("strIngredient") &&
-        value !== "" &&
-        value !== " " &&
-        value !== null
-      ) {
-        ingredients.push({ [key]: value });
-      } else if (
-        key.includes("strMeasure") &&
-        value !== "" &&
-        value !== " " &&
-        value !== null
-      ) {
-        measurements.push({ [key]: value });
-      }
-    });
-    setRecipeIngredients(
-      measurements.map((measurement, index) => {
-        return (
-          <Ingredient key={index}>
-            <Measurement>{`${Object.values(measurement)[0]}`}</Measurement>
-            <Ing>{`${Object.values(ingredients[index])}`}</Ing>
-          </Ingredient>
+          if (
+            key.includes("strIngredient") &&
+            value !== "" &&
+            value !== " " &&
+            value !== null
+          ) {
+            ingredients.push({ [key]: value });
+          } else if (
+            key.includes("strMeasure") &&
+            value !== "" &&
+            value !== " " &&
+            value !== null
+          ) {
+            measurements.push({ [key]: value });
+          }
+        });
+        setRecipeIngredients(
+          measurements.map((measurement, index) => {
+            return (
+              <Ingredient key={index}>
+                <Measurement>{`${Object.values(measurement)[0]}`}</Measurement>
+                <Ing>{`${Object.values(ingredients[index])}`}</Ing>
+              </Ingredient>
+            );
+          })
         );
-      })
-    );
-    return meal;
+        return meal;
+      });
   };
 
   // Fetch random recipe data, generate images and store in state as well as relevant data.
-  let getRandomRecipe = async () => {
+  let getRandomRecipe = async (reload = false) => {
     result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
-    loadRecipeState(result.data.meals[0]);
+    if (reload) {
+    } else {
+      loadRecipeState(result.data.meals[0]);
+    }
     return result;
   };
 
@@ -560,14 +575,25 @@ export default function diydelight() {
     },
     closed: {
       opacity: 0,
-      y: "150%",
+      y: "100%",
       transitionEnd: {
         display: "none",
         zIndex: -1,
       },
     },
-    exit: { opacity: 0, y: "150%" },
-    default: { duration: 0.75 },
+    exit: { opacity: 0, y: "100%" },
+    default: { duration: 1.25 },
+  };
+
+  const desktopVariants = {
+    ...variants,
+    open: { ...variants.open, display: "flex" },
+    closed: {
+      ...variants.closed,
+      transitionEnd: variants.closed.transitionEnd,
+    },
+    exit: { ...variants.exit },
+    default: { ...variants.default },
   };
 
   // animations for the loader element
@@ -576,7 +602,7 @@ export default function diydelight() {
     closed: {
       ...variants.closed,
       y: 0,
-      transition: 500,
+      transition: 1250,
       transitionEnd: {
         display: "none",
       },
@@ -586,19 +612,123 @@ export default function diydelight() {
   // Loader Animation Controller Object
   const loaderAnimControls = useAnimation();
 
-  // Function that controls initial page load animation
+  // Random Recipe View Controller
+  const recipeViewControls = useAnimation();
+
+  // Browse View Controller
+  const browseViewControls = useAnimation();
+
+  // Browse View Single Recipe Controller
+  const browseRecipeViewController = useAnimation();
+
+  // Search View Controller
+  const searchViewControls = useAnimation();
+
+  // Search View Single Recipe Controller
+  const searchViewSingleRecipeController = useAnimation();
+
+  // Animation Sequencing Functions
+
+  // Controls initial page load animation
   let initialLoadSequence = async () => {
-    await loaderAnimControls.start("open");
     await getRandomRecipe();
+    await loaderAnimControls.start("open");
     await loaderAnimControls.start("closed");
     setLoading(false);
+    await recipeViewControls.start("open");
+  };
+
+  // Controls displaying a new random recipe
+  let animateGetNewRandomRecipe = async () => {
+    await getRandomRecipe();
+    await closeCurrentView();
+    setActiveComponent("random");
+    await loaderAnimControls.start("open");
+    await loaderAnimControls.start("closed");
+    setLoading(false);
+    await recipeViewControls.start("open");
+  };
+
+  // Switches from displaying browse recipe options to displaying single recipe
+  let animateBrowseViewSwitchToSingleRecipe = async (specificMeal) => {
+    // Animate out old view
+
+    // display none old view
+
+    // generate new view
+
+    // animate new view into screen
+
+    loadSequence(
+      () => {
+        setShowBrowseClickables(false);
+        setRecipeData(specificMeal.data.meals[0]);
+        setSingleRecipe(specificMeal);
+        return new Promise((res) => {
+          setTimeout(res, 750);
+          setSingleRecipe(true);
+          setShowBrowseRecipe(true);
+          console.log(singleRecipe, showBrowseRecipe, isLoading);
+          return;
+        });
+      },
+      true,
+      true,
+      browseViewControls,
+      browseRecipeViewController
+    ).then(() => {
+      setShowBrowseRecipe(true);
+      browseRecipeViewController.start("open");
+    });
+  };
+
+  let closeCurrentView = async () => {
+    // Case RecipeView
+    if ((activeComponent = "random")) {
+      return recipeViewControls.start("closed");
+    }
+
+    // Case BrowseView
+    if ((activeComponent = "browse")) {
+      return browseViewControls.start("closed");
+    }
+    // Case SearchView
+    if ((activeComponent = "search")) {
+      return searchViewControls.start("closed");
+    }
+  };
+
+  let loadBrowseView = async () => {
+    await closeCurrentView();
+    setActiveComponent("browse");
+    let callback = async () => {
+      let results = {
+        categories: (await getMealCategories()).data.meals,
+        cuisines: (await getMealCuisines()).data.meals,
+      };
+      return results;
+    };
+    setActiveComponent("browse");
+    setRecipeData(false);
+    setSingleRecipe(false);
+    setBrowseView(false);
+    setMealGroup(false);
+    loadSequence(callback).then((results) => {
+      setMealCategories(results.categories);
+      setMealCuisines(results.cuisines);
+      setBrowseView("category");
+      setShowBrowseClickables(true);
+      browseViewControls.start("open");
+    });
   };
 
   // More of a load function than a reload function now.. this scrolls page to top, uses loading animation, and calls async function.
   let loadSequence = async (
     asyncFunction,
-    scrollTop = false,
-    useLoader = true
+    scrollTop = true,
+    useLoader = true,
+    exitAnimController = false,
+    enterAnimController = false
   ) => {
     let result;
     return new Promise(async (resolve, reject) => {
@@ -608,6 +738,9 @@ export default function diydelight() {
           behavior: "smooth",
         });
         await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+      if (exitAnimController) {
+        await exitAnimController.start("closed");
       }
       await setLoading(true);
       if (useLoader) {
@@ -619,13 +752,17 @@ export default function diydelight() {
         await loaderAnimControls.start("closed");
       }
       setLoading(false);
+      if (enterAnimController) {
+        await enterAnimController.start("open");
+      }
       resolve(result);
     });
   };
 
-  let generateClickables = (state, data = false) => {
+  let generateClickables = (state, data = false, animationController) => {
     let cuisines, categories, search, meals;
-    // code runs if function is supplied with data
+
+    // code runs if function is supplied with data - data is used to create single recipe view
     if (data) {
       let clickHandler;
       // code runs if function is run for browse section
@@ -635,21 +772,10 @@ export default function diydelight() {
             (content) => content.strMeal === e.target.dataset.id
           );
           let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+          // Make page disappear, display loader
+
           console.log(specificMeal.data.meals[0]);
-          loadSequence(
-            () => {
-              setShowBrowseClickables(false);
-              setRecipeData(specificMeal.data.meals[0]);
-              setSingleRecipe(specificMeal);
-              return new Promise((res) => {
-                setTimeout(res, 750);
-              });
-            },
-            false,
-            false
-          ).then(() => {
-            setShowBrowseRecipe(true);
-          });
+          animateBrowseViewSwitchToSingleRecipe(specificMeal);
 
           // e.target.dataset.id
         };
@@ -671,7 +797,7 @@ export default function diydelight() {
           // e.target.dataset.id
         };
       }
-      console.log(data);
+      // Code runs to generate clickable buttons from supplied data
       meals = data.map((meal) => (
         <Clickable
           data-type={"meal"}
@@ -687,6 +813,8 @@ export default function diydelight() {
       } else if (state === "search") {
         setSearchClickables(meals);
       }
+      animationController.start("open");
+      // Browse view - case: displaying options
     } else {
       // default case: generate mealgroups from state
       let clickHandler = (e) => {
@@ -701,14 +829,20 @@ export default function diydelight() {
         } else {
           query = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${id}`;
         }
-        loadSequence(async () => await axios(query))
+        loadSequence(
+          async () => await axios(query),
+          true,
+          true,
+          browseViewControls,
+          browseViewControls
+        )
           .then((res) => {
             setMealGroup(res.data.meals);
             return res;
           })
           .then((res) => {
             console.log(browseView);
-            generateClickables(browseView, res.data.meals);
+            generateClickables(browseView, res.data.meals, browseViewControls);
           })
           .catch((err) => console.log(err));
       };
@@ -744,6 +878,7 @@ export default function diydelight() {
         case "search":
           break;
       }
+      animationController.start("open");
     }
   };
 
@@ -753,12 +888,12 @@ export default function diydelight() {
 
   // When browseview changes, new clickables must be generated to present the user with the new data.
   useEffect(() => {
-    generateClickables(browseView);
+    generateClickables(browseView, false, browseViewControls);
   }, [browseView]);
 
   useEffect(() => {
     console.log("Should generate search clickables");
-    generateClickables("search", searchResults.meals);
+    generateClickables("search", searchResults.meals, searchViewControls);
   }, [searchResults]);
 
   // *************
@@ -766,17 +901,22 @@ export default function diydelight() {
   // *************
 
   // RECIPE VIEW
-  let getRecipeView = (includeBackButton = false, backArrowFn = false) => {
+  let getRecipeView = (
+    includeBackButton = false,
+    backArrowFn = false,
+    animationController
+  ) => {
     if (typeof window !== "undefined") {
       // determine desktop or mobile view
       if (window.innerWidth > 750) {
         return (
           <>
             <DesktopRecipeDisplay
-              animate={isLoading ? "closed" : "open"}
+              animate={animationController}
               initial={"closed"}
-              variants={variants}
+              variants={desktopVariants}
               exit="exit"
+              key="desktopRecipeDisplay"
               // exit={{ opacity: 0, zIndex: -1, y: "-100%" }}
             >
               <DesktopYTLink href={recipeData.strYoutube} target="_blank">
@@ -800,7 +940,8 @@ export default function diydelight() {
                   marginLeft="auto"
                   marginTop="1rem"
                   padding={"1rem 2rem"}
-                  clickHandler={() => {
+                  clickHandler={async () => {
+                    let randomRecipe = getRandomRecipe.bind(this, true);
                     loadSequence(getRandomRecipe);
                   }}
                 >
@@ -835,10 +976,11 @@ export default function diydelight() {
       } else {
         return (
           <RecipeDisplay
-            animate={isLoading ? "closed" : "open"}
+            animate={animationController}
             initial={"closed"}
             variants={variants}
             exit="exit"
+            key="mobileRecipeDisplay"
           >
             <a href={recipeData.strYoutube} target="_blank">
               <MobileImageContainer>{recipeMobileImg}</MobileImageContainer>
@@ -913,9 +1055,10 @@ export default function diydelight() {
           <AppNavLink
             thisComponent="random"
             activeComponent={activeComponent}
-            onClick={() => {
-              loadSequence(getRandomRecipe);
-              setActiveComponent("random");
+            onClick={async () => {
+              await animateGetNewRandomRecipe();
+              // await loadSequence(getRandomRecipe);
+              // setActiveComponent("random");
             }}
           >
             Random Recipe
@@ -925,26 +1068,7 @@ export default function diydelight() {
             thisComponent="browse"
             activeComponent={activeComponent}
             onClick={() => {
-              let callback = async () => {
-                let results = {
-                  categories: (await getMealCategories()).data.meals,
-                  cuisines: (await getMealCuisines()).data.meals,
-                };
-                return results;
-              };
-
-              setActiveComponent("browse");
-              setRecipeData(false);
-              setSingleRecipe(false);
-              setBrowseView(false);
-              // setBrowseView("category");
-              setMealGroup(false);
-              loadSequence(callback).then((results) => {
-                setMealCategories(results.categories);
-                setMealCuisines(results.cuisines);
-                setBrowseView("category");
-                setShowBrowseClickables(true);
-              });
+              loadBrowseView();
             }}
           >
             Browse
@@ -956,21 +1080,20 @@ export default function diydelight() {
             onClick={() => {
               loadSequence(
                 () => {
-                  const node = searchInputRef.current
+                  const node = searchInputRef.current;
                   if (searchTerm) {
-                    console.log(node)
-                    node.value = ''
+                    console.log(node);
+                    node.value = "";
                   }
-                  
+
                   setSearchTerm(false);
-                
+
                   setSearchResults(false);
                   setSearchClickables(false);
                   setShowSearchedRecipe(false);
                   setSingleRecipe(false);
                   setRecipeData(false);
                   setActiveComponent("search");
-                 
                 },
                 false,
                 false
@@ -991,19 +1114,23 @@ export default function diydelight() {
             <Loader />
           </LoaderContainer>
           {/* Logic below determines which app view to provide the user. Random, Browse, Search, or Single Recipe view */}
-          {activeComponent === "random" && recipeData ? getRecipeView() : null}
+          {activeComponent === "random" && recipeData
+            ? getRecipeView(false, false, recipeViewControls)
+            : null}
           {activeComponent === "browse" ? (
             <>
               <AnimatePresence>
                 <BrowseContainer
                   animate={
-                    isLoading || singleRecipe || !showBrowseClickables
-                      ? "closed"
-                      : "open"
+                    browseViewControls
+                    // isLoading || singleRecipe || !showBrowseClickables
+                    //   ? "closed"
+                    //   : "open"
                   }
                   initial={"closed"}
                   variants={variants}
                   exit={"exit"}
+                  key="browseContainer"
                 >
                   <BrowseTabs>
                     <Button
@@ -1047,37 +1174,44 @@ export default function diydelight() {
               > */}
 
                 {!isLoading && singleRecipe && showBrowseRecipe
-                  ? getRecipeView(true, () => {
-                      loadSequence(
-                        () => {
-                          setSingleRecipe(false);
-                          setShowBrowseRecipe(false);
-                        },
-                        false,
-                        false
-                      ).then(() => setShowBrowseClickables(true));
-                    })
+                  ? getRecipeView(
+                      true,
+                      () => {
+                        loadSequence(
+                          () => {
+                            setSingleRecipe(false);
+                            setShowBrowseRecipe(false);
+                          },
+                          false,
+                          false
+                        ).then(() => setShowBrowseClickables(true));
+                      },
+                      browseRecipeViewController
+                    )
                   : null}
               </AnimatePresence>
             </>
           ) : null}
           {activeComponent === "search" ? (
-            <>
+            <AnimatePresence>
               <SearchContainer
-                animate={isLoading || searchResults ? "closed" : "open"}
+                animate={
+                  // isLoading || searchResults ? "closed" : "open"
+                  searchViewControls
+                }
                 initial={"closed"}
                 variants={variants}
                 exit="exit"
+                key="searchContainer"
               >
                 <SearchHeading>
                   Enter the name of a dish to search the database for a recipe.
                 </SearchHeading>
                 <SearchBox>
                   <SearchInput
-                  ref={searchInputRef}
+                    ref={searchInputRef}
                     onChange={(event) => {
                       setSearchTerm(event.target.value);
-                      
                     }}
                     type="text"
                     onKeyDown={async (e) => {
@@ -1103,13 +1237,15 @@ export default function diydelight() {
               </SearchContainer>
               <SearchResultsDisplay
                 animate={
-                  isLoading || !searchResults || !showSearchClickables
-                    ? "closed"
-                    : "open"
+                  searchViewControls
+                  // isLoading || !searchResults || !showSearchClickables
+                  //   ? "closed"
+                  //   : "open"
                 }
                 exit="exit"
                 initial={"closed"}
                 variants={variants}
+                key="SearchResultsDisplay"
               >
                 <SearchResultsHeading>
                   <SearchHeadingText>
@@ -1120,18 +1256,28 @@ export default function diydelight() {
                       </>
                     ) : null}
                   </SearchHeadingText>
-                  <SearchReturn onClick={() => { const node = searchInputRef.current
-                                setSearchTerm(false);
-                
-                                setSearchResults(false);
-                                setSearchClickables(false);
-                                setShowSearchedRecipe(false);
-                                setSingleRecipe(false);
-                                setRecipeData(false);
-                                setActiveComponent("search");
-                  node.value = ''
-                  node.focus()}}>
-                  <SearchBackArrow size={35} /> Go Back? 
+                  <SearchReturn
+                    onClick={() => {
+                      const node = searchInputRef.current;
+                      loadSequence(
+                        () => {
+                          setSearchTerm(false);
+                          setSearchResults(false);
+                          setSearchClickables(false);
+                          setShowSearchedRecipe(false);
+                          setSingleRecipe(false);
+                          setRecipeData(false);
+                          setActiveComponent("search");
+                          if (searchTerm) {
+                            node.value = "";
+                          }
+                        },
+                        false,
+                        false
+                      );
+                    }}
+                  >
+                    <SearchBackArrow size={35} /> Go Back?
                   </SearchReturn>
                 </SearchResultsHeading>
                 <ClickableGrid>
@@ -1140,16 +1286,19 @@ export default function diydelight() {
               </SearchResultsDisplay>
               <SearchedRecipeWindow
                 animate={
-                  isLoading || !searchResults || !showSearchedRecipe
-                    ? "closed"
-                    : "open"
+                  // isLoading || !searchResults || !showSearchedRecipe
+                  //   ? "closed"
+                  //   : "open"
+                  searchViewControls
                 }
                 exit="exit"
                 initial={"closed"}
                 variants={variants}
+                key="SearchedRecipeWindow"
               >
-                <AnimatePresence>
-                  {getRecipeView(true, () => {
+                {getRecipeView(
+                  true,
+                  () => {
                     loadSequence(
                       () => {
                         setShowSearchedRecipe(false);
@@ -1164,10 +1313,11 @@ export default function diydelight() {
                       console.log(res);
                       setShowSearchClickables(true);
                     });
-                  })}
-                </AnimatePresence>
+                  },
+                  searchViewSingleRecipeController
+                )}
               </SearchedRecipeWindow>
-            </>
+            </AnimatePresence>
           ) : null}
         </RecipeContainer>
       </PageContent>
