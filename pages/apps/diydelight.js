@@ -696,6 +696,12 @@ export default function diydelight() {
   // Search View Controller
   const searchViewControls = useAnimation();
 
+  // Search View Recipe Controller
+  const searchViewRecipeControls = useAnimation();
+
+  // Search View Controller
+  const searchViewResultsControls = useAnimation();
+
   // Search View Single Recipe Controller
   const searchViewSingleRecipeController = useAnimation();
 
@@ -712,11 +718,11 @@ export default function diydelight() {
 
   // Controls displaying a new random recipe
   let animateGetNewRandomRecipe = async () => {
-    let closeView = await closeCurrentView();
-    let recipe = await getRandomRecipe();
-    setActiveComponent("random");
+    await closeCurrentView();
     await loaderAnimControls.start("open");
+    let recipe = await getRandomRecipe();
     await loaderAnimControls.start("closed");
+    setActiveComponent("random");
     setLoading(false);
     await recipeViewControls.start("open");
   };
@@ -750,6 +756,23 @@ export default function diydelight() {
     });
   };
 
+  let loadSearchComponent = async () => {
+    await closeCurrentView();
+    setActiveComponent("search");
+    const node = searchInputRef.current;
+    if (searchTerm) {
+      node.value = "";
+      setSearchTerm(false);
+      setSearchResults(false);
+      setSearchClickables(false);
+      setShowSearchedRecipe(false);
+    }
+    setSingleRecipe(false);
+    setRecipeData(false);
+
+    await searchViewControls.start("open");
+  };
+
   let closeCurrentView = async () => {
     // Case RecipeView
     if ((activeComponent = "random")) {
@@ -759,7 +782,7 @@ export default function diydelight() {
 
     // Case BrowseView
     if ((activeComponent = "browse")) {
-      if (singleRecipe) {
+      if (showBrowseRecipe) {
         await browseRecipeViewController.start("closed");
         resetState();
       } else {
@@ -769,8 +792,18 @@ export default function diydelight() {
     }
     // Case SearchView
     if ((activeComponent = "search")) {
-      await searchViewControls.start("closed");
-      resetState();
+      if (showSearchClickables) {
+        // close that view
+        searchViewResultsControls.start("closed");
+        resetState();
+      } else if (showSearchedRecipe) {
+        // close this view
+        searchViewRecipeControls.start("closed");
+        resetState();
+      } else {
+        await searchViewControls.start("closed");
+        resetState();
+      }
     }
   };
 
@@ -1118,6 +1151,7 @@ export default function diydelight() {
   };
 
   let handleSearch = async () => {
+    await searchViewControls.start("closed");
     let result = await getSearchResult(searchTerm);
     console.log(result);
     if (result.data.meals && result.data.meals !== null) {
@@ -1126,6 +1160,7 @@ export default function diydelight() {
       setSearchResults({ meals: [] });
     }
     setShowSearchClickables(true);
+    await searchViewResultsControls.start("open");
     console.log(searchResults);
   };
   return (
@@ -1161,26 +1196,7 @@ export default function diydelight() {
             thisComponent="search"
             activeComponent={activeComponent}
             onClick={() => {
-              loadSequence(
-                () => {
-                  const node = searchInputRef.current;
-                  if (searchTerm) {
-                    console.log(node);
-                    node.value = "";
-                  }
-
-                  setSearchTerm(false);
-
-                  setSearchResults(false);
-                  setSearchClickables(false);
-                  setShowSearchedRecipe(false);
-                  setSingleRecipe(false);
-                  setRecipeData(false);
-                  setActiveComponent("search");
-                },
-                false,
-                false
-              );
+              loadSearchComponent();
             }}
           >
             Search
@@ -1210,9 +1226,9 @@ export default function diydelight() {
                     //   ? "closed"
                     //   : "open"
                   }
-                  initial={"closed"}
+                  initial="closed"
                   variants={variants}
-                  exit={"exit"}
+                  exit="exit"
                   key="browseContainer"
                 >
                   <BrowseTabs>
@@ -1294,11 +1310,8 @@ export default function diydelight() {
           {activeComponent === "search" ? (
             <AnimatePresence>
               <SearchContainer
-                animate={
-                  // isLoading || searchResults ? "closed" : "open"
-                  searchViewControls
-                }
-                initial={"closed"}
+                animate={searchViewControls}
+                initial="closed"
                 variants={variants}
                 exit="exit"
                 key="searchContainer"
@@ -1320,12 +1333,12 @@ export default function diydelight() {
                     }}
                   />
                   <Button
-                    bgColor={"#FC7419"}
-                    color={"#FFE9E9"}
+                    bgColor="#FC7419"
+                    color="#FFE9E9"
                     marginRight="auto"
                     marginLeft="auto"
                     marginTop="1rem"
-                    padding={"1rem 2rem"}
+                    padding="1rem 2rem"
                     clickHandler={async () => {
                       loadSequence(handleSearch);
                     }}
@@ -1336,13 +1349,13 @@ export default function diydelight() {
               </SearchContainer>
               <SearchResultsDisplay
                 animate={
-                  searchViewControls
+                  searchViewResultsControls
                   // isLoading || !searchResults || !showSearchClickables
                   //   ? "closed"
                   //   : "open"
                 }
                 exit="exit"
-                initial={"closed"}
+                initial="closed"
                 variants={variants}
                 key="SearchResultsDisplay"
               >
@@ -1388,7 +1401,7 @@ export default function diydelight() {
                   // isLoading || !searchResults || !showSearchedRecipe
                   //   ? "closed"
                   //   : "open"
-                  searchViewControls
+                  searchViewRecipeControls
                 }
                 exit="exit"
                 initial={"closed"}
