@@ -111,8 +111,8 @@ const MobileImageContainer = styled.div`
 
 const DesktopImageContainer = styled.div`
   margin: auto auto auto 0;
-  max-height: 39.85vw;
-  max-width: 39.85vw;
+  height: 39.85vw;
+  width: 39.85vw;
   overflow: hidden;
 `;
 
@@ -527,6 +527,7 @@ export default function diydelight() {
 
   // set single recipe data
   let loadRecipeState = async (meal) => {
+    console.log(meal);
     let ingredients = [],
       measurements = [];
     console.log(meal.strMealThumb);
@@ -565,7 +566,7 @@ export default function diydelight() {
             );
           })
         );
-        Object.entries(result.data.meals[0]).forEach((entry) => {
+        Object.entries(meal).forEach((entry) => {
           let key = entry[0];
           let value = entry[1];
 
@@ -601,17 +602,18 @@ export default function diydelight() {
 
   // Fetch random recipe data, generate images and store in state as well as relevant data.
   let getRandomRecipe = async (reload = false) => {
-    result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
-    if (reload) {
-    } else {
-      loadRecipeState(result.data.meals[0]);
-    }
-    return result;
+    // result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
+    // if (reload) {
+    // } else {
+    //   loadRecipeState(result.data.meals[0]);
+    // }
+    // return result;
+    return axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
   };
 
   let getSpecificRecipe = async (id) => {
     console.log(id);
-    result = await axios(
+    let result = await axios(
       `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
     );
     console.log(result);
@@ -695,7 +697,7 @@ export default function diydelight() {
   // Browse View Single Recipe Controller
   const browseRecipeViewController = useAnimation();
 
-  // Search View Controller
+  // Search View Input Controller
   const searchViewControls = useAnimation();
 
   // Search View Recipe Controller
@@ -711,22 +713,28 @@ export default function diydelight() {
 
   // Controls initial page load animation
   let initialLoadSequence = async () => {
-    await getRandomRecipe();
-    await loaderAnimControls.start("open");
-    await loaderAnimControls.start("closed");
-    setLoading(false);
-    await recipeViewControls.start("open");
+    getRandomRecipe().then(async (data) => {
+      console.log(data);
+      await loadRecipeState(data.data.meals[0]);
+      await loaderAnimControls.start("open");
+      await loaderAnimControls.start("closed");
+      setLoading(false);
+      await recipeViewControls.start("open");
+    });
   };
 
   // Controls displaying a new random recipe
   let animateGetNewRandomRecipe = async () => {
     await closeCurrentView();
     await loaderAnimControls.start("open");
-    let recipe = await getRandomRecipe();
-    await loaderAnimControls.start("closed");
     setActiveComponent("random");
-    setLoading(false);
-    await recipeViewControls.start("open");
+    getRandomRecipe().then(async (data) => {
+      // await loaderAnimControls.start("open");
+      await loaderAnimControls.start("closed");
+      await loadRecipeState(data.data.meals[0]);
+      setLoading(false);
+      await recipeViewControls.start("open");
+    });
   };
 
   // Switches from displaying browse recipe options to displaying single recipe
@@ -761,7 +769,7 @@ export default function diydelight() {
   let loadSearchComponent = async () => {
     await closeCurrentView();
     setActiveComponent("search");
-    setShowSearchInput(true);
+
     const node = searchInputRef.current;
     if (searchTerm) {
       node.value = "";
@@ -770,6 +778,7 @@ export default function diydelight() {
       setSearchClickables(false);
       setShowSearchedRecipe(false);
     }
+    setShowSearchInput(true);
     setSingleRecipe(false);
     setRecipeData(false);
 
@@ -806,8 +815,7 @@ export default function diydelight() {
         await searchViewResultsControls.start("closed");
         resetState();
       } else if (showSearchedRecipe) {
-        // close this view
-        await searchViewRecipeControls.start("closed");
+        searchViewSingleRecipeController.start("closed");
         resetState();
       } else {
         await searchViewControls.start("closed");
@@ -903,16 +911,22 @@ export default function diydelight() {
         // Code runs if function is executed for the purposes of the search feature.
       } else if (state === "search") {
         clickHandler = async (e) => {
+          // Animate searchresults off screen
+          await searchViewResultsControls.start("closed");
+          // Generate new view
           let meal = data.filter(
             (content) => content.strMeal === e.target.dataset.id
           );
           let specificMeal = await getSpecificRecipe(meal[0].idMeal);
           console.log(specificMeal.data.meals[0]);
+
+          // Bring animate new view onscreen.
           loadSequence(async () => {
             setShowSearchClickables(false);
             setSingleRecipe(specificMeal);
             setRecipeData(specificMeal.data.meals[0]);
             setShowSearchedRecipe(true);
+            await searchViewSingleRecipeController.start("open");
           });
           // e.target.dataset.id
         };
@@ -1160,10 +1174,9 @@ export default function diydelight() {
   };
 
   let handleSearch = async () => {
-    await searchViewControls.start("closed");
     await closeCurrentView();
+    await loaderAnimControls.start("open");
     setShowSearchInput(false);
-    // await searchViewControls.stop();
     let result = await getSearchResult(searchTerm);
     console.log(result);
     if (result.data.meals && result.data.meals !== null) {
@@ -1171,9 +1184,9 @@ export default function diydelight() {
     } else {
       setSearchResults({ meals: [] });
     }
+    await loaderAnimControls.start("closed");
     setShowSearchClickables(true);
     await searchViewResultsControls.start("open");
-    console.log(searchResults);
   };
   return (
     <Layout>
@@ -1382,7 +1395,8 @@ export default function diydelight() {
                     onClick={() => {
                       const node = searchInputRef.current;
                       loadSequence(
-                        () => {
+                        async () => {
+                          await searchViewResultsControls.start("closed");
                           setSearchTerm(false);
                           setSearchResults(false);
                           setSearchClickables(false);
@@ -1391,6 +1405,7 @@ export default function diydelight() {
                           setRecipeData(false);
                           setActiveComponent("search");
                           setShowSearchInput(true);
+                          await searchViewControls.start("open");
                           if (searchTerm) {
                             node.value = "";
                           }
@@ -1400,14 +1415,14 @@ export default function diydelight() {
                       );
                     }}
                   >
-                    <SearchBackArrow size={35} /> Go Back?
+                    <SearchBackArrow size={35} /> Go Back
                   </SearchReturn>
                 </SearchResultsHeading>
                 <ClickableGrid>
                   {searchResults ? searchClickables : ""}
                 </ClickableGrid>
               </SearchResultsDisplay>
-              <SearchedRecipeWindow
+              {/* <SearchedRecipeWindow
                 animate={
                   // isLoading || !searchResults || !showSearchedRecipe
                   //   ? "closed"
@@ -1418,28 +1433,27 @@ export default function diydelight() {
                 initial={"closed"}
                 variants={variants}
                 key="SearchedRecipeWindow"
-              >
-                {getRecipeView(
-                  true,
-                  () => {
-                    loadSequence(
-                      () => {
-                        setShowSearchedRecipe(false);
-                        return new Promise((res) => {
-                          // setTimeout(res, 750);
-                        });
-                      },
+              > */}
+              {getRecipeView(
+                true,
+                () => {
+                  loadSequence(
+                    async () => {
+                      await searchViewResultsControls.start("closed");
+                      setShowSearchedRecipe(false);
+                      return await searchViewControls.start("open");
+                    },
 
-                      false,
-                      false
-                    ).then((res) => {
-                      console.log(res);
-                      setShowSearchClickables(true);
-                    });
-                  },
-                  searchViewSingleRecipeController
-                )}
-              </SearchedRecipeWindow>
+                    false,
+                    false
+                  ).then((res) => {
+                    console.log(res);
+                    setShowSearchClickables(true);
+                  });
+                },
+                searchViewSingleRecipeController
+              )}
+              {/* </SearchedRecipeWindow> */}
             </>
           ) : // </AnimatePresence>
           null}

@@ -50,6 +50,8 @@ DIYDELIGHT
     c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
     text in it. All I need to do is clear the input box when the user leaves the component.
     d. Animation is broken if you go from a searched recipe to the search main screen again. exit and enter animations occur simultaneously.
+    e. Search Term not displayed for some reason
+    f. I think I can solve the issue of simultaneous animations occuring when a recipe clickable is clicked by using useEffect to trigger the animation at the time of data population
 
 3. Animations should be fully implemented.
     a. There is no exit/enter animation when switching between major components. 
@@ -57,12 +59,16 @@ DIYDELIGHT
 
 4. Ipad screen size is broken for recipe view
 
+5. No back buttons function. 
+
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
 
 2. The search "back button" animations are kinda fucked, we're missing an exit animation for the single recipe view -> search result movement.
 
 3. Recipe image does not change at the same time as the text.. should change offscreen ideally. At least the old image should go away before it appears again. 
+
+4. Recipe view sometimes animates into view before data has been injected, causing page jump. 
 
 ***Bugs***
 
