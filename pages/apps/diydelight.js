@@ -111,7 +111,7 @@ const MobileImageContainer = styled.div`
 
 const DesktopImageContainer = styled.div`
   margin: auto auto auto 0;
-
+  max-height: 39.85vw;
   max-width: 39.85vw;
   overflow: hidden;
 `;
@@ -377,8 +377,8 @@ const SearchBackArrow = styled(AiOutlineArrowLeft)`
 `;
 
 const BlobImage = styled.img`
-  width: 100%;
-  height: 100%;
+  width: ${(props) => (props.width ? props.width : "100%")};
+  height: ${(props) => (props.height ? props.height : "100%")};
 `;
 
 export default function diydelight() {
@@ -485,6 +485,8 @@ export default function diydelight() {
 
   // User input character string - to be sent to API
   let [searchTerm, setSearchTerm] = useState(false);
+  // Whether or not to display search prompt and input to users
+  let [showSearchInput, setShowSearchInput] = useState(false);
   let [searchResults, setSearchResults] = useState(false);
   let [showSearchClickables, setShowSearchClickables] = useState(false);
   let [searchClickables, setSearchClickables] = useState(false);
@@ -536,8 +538,8 @@ export default function diydelight() {
           <BlobImage
             src={imageObjectURL}
             layout="responsive"
-            height={"25vh"}
-            width={"25vw"}
+            height={"39.85vw"}
+            width={"39.85vw"}
           />
         );
         setMobileRecipeImg(
@@ -759,6 +761,7 @@ export default function diydelight() {
   let loadSearchComponent = async () => {
     await closeCurrentView();
     setActiveComponent("search");
+    setShowSearchInput(true);
     const node = searchInputRef.current;
     if (searchTerm) {
       node.value = "";
@@ -792,13 +795,19 @@ export default function diydelight() {
     }
     // Case SearchView
     if ((activeComponent = "search")) {
+      if (
+        (searchTerm && !showSearchClickables) ||
+        (searchTerm && !showSearchedRecipe)
+      ) {
+        await searchViewControls.start("closed");
+      }
       if (showSearchClickables) {
         // close that view
-        searchViewResultsControls.start("closed");
+        await searchViewResultsControls.start("closed");
         resetState();
       } else if (showSearchedRecipe) {
         // close this view
-        searchViewRecipeControls.start("closed");
+        await searchViewRecipeControls.start("closed");
         resetState();
       } else {
         await searchViewControls.start("closed");
@@ -1152,6 +1161,9 @@ export default function diydelight() {
 
   let handleSearch = async () => {
     await searchViewControls.start("closed");
+    await closeCurrentView();
+    setShowSearchInput(false);
+    // await searchViewControls.stop();
     let result = await getSearchResult(searchTerm);
     console.log(result);
     if (result.data.meals && result.data.meals !== null) {
@@ -1209,6 +1221,7 @@ export default function diydelight() {
             animate={loaderAnimControls}
             variants={LoaderVariants}
             exit="exit"
+            key="LoaderContainer"
           >
             <Loader />
           </LoaderContainer>
@@ -1220,12 +1233,7 @@ export default function diydelight() {
             <>
               <AnimatePresence>
                 <BrowseContainer
-                  animate={
-                    browseViewControls
-                    // isLoading || singleRecipe || !showBrowseClickables
-                    //   ? "closed"
-                    //   : "open"
-                  }
+                  animate={browseViewControls}
                   initial="closed"
                   variants={variants}
                   exit="exit"
@@ -1282,11 +1290,6 @@ export default function diydelight() {
                     <ClickableGrid>{browseContent}</ClickableGrid>
                   </AnimateGrid>
                 </BrowseContainer>
-                {/* <SingleRecipeView
-                animate={isLoading || !singleRecipe ? "closed" : "open"}
-                initial={"closed"}
-                variants={variants}
-              > */}
 
                 {showBrowseRecipe
                   ? getRecipeView(
@@ -1308,45 +1311,52 @@ export default function diydelight() {
             </>
           ) : null}
           {activeComponent === "search" ? (
-            <AnimatePresence>
-              <SearchContainer
-                animate={searchViewControls}
-                initial="closed"
-                variants={variants}
-                exit="exit"
-                key="searchContainer"
-              >
-                <SearchHeading>
-                  Enter the name of a dish to search the database for a recipe.
-                </SearchHeading>
-                <SearchBox>
-                  <SearchInput
-                    ref={searchInputRef}
-                    onChange={(event) => {
-                      setSearchTerm(event.target.value);
-                    }}
-                    type="text"
-                    onKeyDown={async (e) => {
-                      if (e.key === "Enter") {
-                        loadSequence(handleSearch);
-                      }
-                    }}
-                  />
-                  <Button
-                    bgColor="#FC7419"
-                    color="#FFE9E9"
-                    marginRight="auto"
-                    marginLeft="auto"
-                    marginTop="1rem"
-                    padding="1rem 2rem"
-                    clickHandler={async () => {
-                      loadSequence(handleSearch);
-                    }}
-                  >
-                    Submit
-                  </Button>
-                </SearchBox>
-              </SearchContainer>
+            // <AnimatePresence>
+            <>
+              {showSearchInput ? (
+                <SearchContainer
+                  animate={searchViewControls}
+                  initial="closed"
+                  variants={variants}
+                  exit="exit"
+                  key="searchContainer"
+                >
+                  <SearchHeading>
+                    Enter the name of a dish to search the database for a
+                    recipe.
+                  </SearchHeading>
+                  <SearchBox>
+                    <SearchInput
+                      ref={searchInputRef}
+                      onChange={(event) => {
+                        setSearchTerm(event.target.value);
+                      }}
+                      type="text"
+                      onKeyDown={async (e) => {
+                        if (e.key === "Enter") {
+                          // loadSequence(handleSearch);
+                          handleSearch();
+                        }
+                      }}
+                    />
+                    <Button
+                      bgColor="#FC7419"
+                      color="#FFE9E9"
+                      marginRight="auto"
+                      marginLeft="auto"
+                      marginTop="1rem"
+                      padding="1rem 2rem"
+                      clickHandler={async () => {
+                        // loadSequence(handleSearch);
+                        handleSearch();
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </SearchBox>
+                </SearchContainer>
+              ) : null}
+
               <SearchResultsDisplay
                 animate={
                   searchViewResultsControls
@@ -1380,6 +1390,7 @@ export default function diydelight() {
                           setSingleRecipe(false);
                           setRecipeData(false);
                           setActiveComponent("search");
+                          setShowSearchInput(true);
                           if (searchTerm) {
                             node.value = "";
                           }
@@ -1429,8 +1440,9 @@ export default function diydelight() {
                   searchViewSingleRecipeController
                 )}
               </SearchedRecipeWindow>
-            </AnimatePresence>
-          ) : null}
+            </>
+          ) : // </AnimatePresence>
+          null}
         </RecipeContainer>
       </PageContent>
     </Layout>
