@@ -621,6 +621,23 @@ export default function diydelight() {
     return result;
   };
 
+  // clear search state
+  const clearSearchData = () => {
+    if (searchInputRef.current) {
+      const node = searchInputRef.current;
+      node.value = "";
+    }
+    setShowSearchedRecipe(false);
+    setShowSearchClickables(true);
+    setSearchTerm(false);
+    setSearchResults(false);
+    setSearchClickables(false);
+    setShowSearchedRecipe(false);
+    setSingleRecipe(false);
+    setRecipeData(false);
+    setShowSearchInput(true);
+  };
+
   // *************
   //   ANIMATION
   // *************
@@ -727,6 +744,7 @@ export default function diydelight() {
   let animateGetNewRandomRecipe = async () => {
     await closeCurrentView();
     await loaderAnimControls.start("open");
+    clearSearchData();
     setActiveComponent("random");
     getRandomRecipe().then(async (data) => {
       // await loaderAnimControls.start("open");
@@ -743,13 +761,13 @@ export default function diydelight() {
     await browseViewControls.start("closed");
     // display none old view
 
-    await loaderAnimControls.start("open");
     setLoading(true);
-    // generate new view
     setShowBrowseClickables(false);
+    await loaderAnimControls.start("open");
+    await loaderAnimControls.start("closed");
     setRecipeData(specificMeal.data.meals[0]);
     setSingleRecipe(specificMeal);
-    await loaderAnimControls.start("closed");
+    // generate new view
     let func = async () => {
       return new Promise((res, rej) => {
         setSingleRecipe(true);
@@ -768,85 +786,89 @@ export default function diydelight() {
 
   let loadSearchComponent = async () => {
     await closeCurrentView();
+    // await loaderAnimControls.start("open");
+
+    // Clear any stale data
+    clearSearchData();
+
+    // Set view to proper component
     setActiveComponent("search");
 
-    const node = searchInputRef.current;
-    if (searchTerm) {
-      node.value = "";
-      setSearchTerm(false);
-      setSearchResults(false);
-      setSearchClickables(false);
-      setShowSearchedRecipe(false);
-    }
+    // Set view to proper component feature.
     setShowSearchInput(true);
-    setSingleRecipe(false);
-    setRecipeData(false);
 
+    // await loaderAnimControls.start("closed");
     await searchViewControls.start("open");
   };
 
   let closeCurrentView = async () => {
+    console.log(activeComponent);
     // Case RecipeView
     if ((activeComponent = "random")) {
       await recipeViewControls.start("closed");
-      resetState();
+
+      // resetState();
     }
 
     // Case BrowseView
     if ((activeComponent = "browse")) {
       if (showBrowseRecipe) {
         await browseRecipeViewController.start("closed");
-        resetState();
+
+        // resetState();
       } else {
         await browseViewControls.start("closed");
-        resetState();
+
+        // resetState();
       }
     }
     // Case SearchView
     if ((activeComponent = "search")) {
       if (
-        (searchTerm && !showSearchClickables) ||
-        (searchTerm && !showSearchedRecipe)
+        (showSearchInput && !showSearchClickables) ||
+        (showSearchInput && !showSearchedRecipe)
       ) {
         await searchViewControls.start("closed");
       }
       if (showSearchClickables) {
         // close that view
         await searchViewResultsControls.start("closed");
-        resetState();
+
+        // resetState();
       } else if (showSearchedRecipe) {
-        searchViewSingleRecipeController.start("closed");
-        resetState();
+        await searchViewSingleRecipeController.start("closed");
+
+        // resetState();
       } else {
         await searchViewControls.start("closed");
-        resetState();
+
+        // resetState();
       }
     }
   };
 
   let loadBrowseView = async () => {
     await closeCurrentView();
+    clearSearchData();
+    await loaderAnimControls.start("open");
     setActiveComponent("browse");
-    let callback = async () => {
-      let results = {
-        categories: (await getMealCategories()).data.meals,
-        cuisines: (await getMealCuisines()).data.meals,
-      };
-      return results;
+    let results = {
+      categories: (await getMealCategories()).data.meals,
+      cuisines: (await getMealCuisines()).data.meals,
     };
-    setActiveComponent("browse");
-    setRecipeData(false);
-    setSingleRecipe(false);
-    setBrowseView(false);
-    setMealGroup(false);
-    loadSequence(callback).then((results) => {
-      setMealCategories(results.categories);
-      setMealCuisines(results.cuisines);
-      setBrowseView("category");
-      setShowBrowseClickables(true);
-      browseViewControls.start("open");
-      browseViewButtonGridControls.start("open");
-    });
+
+    setMealCategories(results.categories);
+    setMealCuisines(results.cuisines);
+    setBrowseView("category");
+    setShowBrowseClickables(true);
+    await loaderAnimControls.start("closed");
+    // browseViewControls.start("open");
+    browseViewButtonGridControls.start("open");
+    // Redundant state clearing (I think) - but perhaps not, check if it handles single group data and if that is handled elsewhere
+    // setRecipeData(false);
+    // setSingleRecipe(false);
+    // setBrowseView(false);
+    // setMealGroup(false);
   };
 
   // More of a load function than a reload function now.. this scrolls page to top, uses loading animation, and calls async function.
@@ -887,7 +909,7 @@ export default function diydelight() {
     });
   };
 
-  let generateClickables = (state, data = false, animationController) => {
+  let generateClickables = async (state, data = false, animationController) => {
     let cuisines, categories, search, meals;
 
     // code runs if function is supplied with data - data is used to create single recipe view
@@ -921,13 +943,16 @@ export default function diydelight() {
           console.log(specificMeal.data.meals[0]);
 
           // Bring animate new view onscreen.
-          loadSequence(async () => {
-            setShowSearchClickables(false);
-            setSingleRecipe(specificMeal);
-            setRecipeData(specificMeal.data.meals[0]);
-            setShowSearchedRecipe(true);
-            await searchViewSingleRecipeController.start("open");
-          });
+          setShowSearchClickables(false);
+          setSingleRecipe(specificMeal);
+          setRecipeData(specificMeal.data.meals[0]);
+          setShowSearchedRecipe(true);
+          await loaderAnimControls.start("open");
+          await loaderAnimControls.start("closed");
+          await searchViewSingleRecipeController.start("open");
+          // loadSequence(async () => {
+
+          // });
           // e.target.dataset.id
         };
       }
@@ -947,7 +972,7 @@ export default function diydelight() {
       } else if (state === "search") {
         setSearchClickables(meals);
       }
-      animationController.start("open");
+      await animationController.start("open");
       // Browse view - case: displaying options
     } else {
       // default case: generate mealgroups from state
@@ -1029,6 +1054,7 @@ export default function diydelight() {
 
   useEffect(() => {
     console.log("Should generate search clickables");
+    console.log(searchTerm);
     generateClickables("search", searchResults.meals, searchViewControls);
   }, [searchResults]);
 
@@ -1079,7 +1105,7 @@ export default function diydelight() {
                   clickHandler={async () => {
                     // let randomRecipe = getRandomRecipe.bind(this, true);
                     // loadSequence(getRandomRecipe);
-                    await closeCurrentView();
+                    // await closeCurrentView();
                     await animateGetNewRandomRecipe();
                   }}
                 >
@@ -1148,7 +1174,7 @@ export default function diydelight() {
               marginTop="1rem"
               padding={"1rem 2rem"}
               clickHandler={async () => {
-                await closeCurrentView();
+                // await closeCurrentView();
                 await animateGetNewRandomRecipe();
               }}
             >
@@ -1173,6 +1199,9 @@ export default function diydelight() {
     }
   };
 
+  // Break this function up. I think I should use a useEffect listener on the searchResult state. When change is detected,
+  // loading animation can end and UI can be updated with search results.
+
   let handleSearch = async () => {
     await closeCurrentView();
     await loaderAnimControls.start("open");
@@ -1186,6 +1215,7 @@ export default function diydelight() {
     }
     await loaderAnimControls.start("closed");
     setShowSearchClickables(true);
+    console.log(searchTerm);
     await searchViewResultsControls.start("open");
   };
   return (
@@ -1199,7 +1229,7 @@ export default function diydelight() {
             thisComponent="random"
             activeComponent={activeComponent}
             onClick={async () => {
-              await closeCurrentView();
+              // await closeCurrentView();
               // resetState();
               await animateGetNewRandomRecipe();
             }}
@@ -1361,6 +1391,7 @@ export default function diydelight() {
                       padding="1rem 2rem"
                       clickHandler={async () => {
                         // loadSequence(handleSearch);
+
                         handleSearch();
                       }}
                     >
@@ -1371,12 +1402,7 @@ export default function diydelight() {
               ) : null}
 
               <SearchResultsDisplay
-                animate={
-                  searchViewResultsControls
-                  // isLoading || !searchResults || !showSearchClickables
-                  //   ? "closed"
-                  //   : "open"
-                }
+                animate={searchViewResultsControls}
                 exit="exit"
                 initial="closed"
                 variants={variants}
@@ -1422,18 +1448,7 @@ export default function diydelight() {
                   {searchResults ? searchClickables : ""}
                 </ClickableGrid>
               </SearchResultsDisplay>
-              {/* <SearchedRecipeWindow
-                animate={
-                  // isLoading || !searchResults || !showSearchedRecipe
-                  //   ? "closed"
-                  //   : "open"
-                  searchViewRecipeControls
-                }
-                exit="exit"
-                initial={"closed"}
-                variants={variants}
-                key="SearchedRecipeWindow"
-              > */}
+
               {getRecipeView(
                 true,
                 () => {
@@ -1447,16 +1462,13 @@ export default function diydelight() {
                     false,
                     false
                   ).then((res) => {
-                    console.log(res);
                     setShowSearchClickables(true);
                   });
                 },
                 searchViewSingleRecipeController
               )}
-              {/* </SearchedRecipeWindow> */}
             </>
-          ) : // </AnimatePresence>
-          null}
+          ) : null}
         </RecipeContainer>
       </PageContent>
     </Layout>
