@@ -288,9 +288,9 @@ export default function Projects() {
 
   const WebsiteList = websites.map((site) => {
     return (
-      <Entry>
+      <Entry key={site.name}>
         <IconWindow>
-          <a href={site.url} target="_blank">
+          <a href={site.url} target="_blank" rel="noreferrer">
             <Icon src={site.icon} layout="intrinsic" height={135} width={300} />
           </a>
         </IconWindow>
@@ -305,7 +305,7 @@ export default function Projects() {
   });
   const EffectList = effects.map((effect) => {
     return (
-      <Entry>
+      <Entry key={effect.name}>
         <EffectWindow>{effect.JSX}</EffectWindow>
         <TextContent>
           {/* <Link href={site.url}> */}
@@ -385,7 +385,6 @@ export default function Projects() {
               padding={"1.5rem 3rem"}
               bgColor={"var(--color-2)"}
               color={"var(--color-black)"}
-              padding="1rem 3.5rem"
             >
               Contact
             </Button>

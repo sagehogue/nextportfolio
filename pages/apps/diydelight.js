@@ -389,7 +389,7 @@ const Spacer = styled.span`
   padding-left: ${(props) => (props.width ? props.width : "0")};
 `;
 
-export default function diydelight() {
+export default function Diydelight() {
   // *************
   // DATA / STATE
   // *************
@@ -916,6 +916,7 @@ export default function diydelight() {
     };
     return mealGroup.map((meal) => (
       <Clickable
+        key={meal.strMeal}
         data-type={"meal"}
         data-id={meal.strMeal}
         onClick={clickHandler}
@@ -951,6 +952,7 @@ export default function diydelight() {
     // Generate JSX to store in state, to later be filtered by the user.
     let categoryJSX = mealCategories.map((category) => (
       <Clickable
+        key={category.strCategory}
         data-type={"category"}
         data-id={category.strCategory}
         onClick={clickHandler}
@@ -960,6 +962,7 @@ export default function diydelight() {
     ));
     let cuisineJSX = mealCuisines.map((cuisine) => (
       <Clickable
+        key={cuisine.strArea}
         data-type={"cuisine"}
         data-id={cuisine.strArea}
         onClick={clickHandler}
@@ -969,6 +972,41 @@ export default function diydelight() {
     ));
     console.log(mealCuisines, mealCategories);
     setBrowseClickables([...categoryJSX, ...cuisineJSX]);
+  };
+
+  let generateSearchClickables = (data) => {
+    // Clickhandler for clickable results
+    let clickHandler = async (e) => {
+      // Animate searchresults off screen
+      await searchViewResultsControls.start("closed");
+      await loaderAnimControls.start("open");
+      // Generate new view
+      let meal = filterForMeal(e.target.dataset.id, data);
+
+      let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+      console.log(specificMeal.data.meals[0]);
+
+      // Bring animate new view onscreen.
+      setShowSearchClickables(false);
+      setSingleRecipe(specificMeal);
+      setRecipeData(specificMeal.data.meals[0]);
+      setShowSearchedRecipe(true);
+      await loaderAnimControls.start("closed");
+      await searchViewSingleRecipeController.start("open");
+    };
+
+    // Generate JSX to store in state
+    let meals = data.map((meal) => (
+      <Clickable
+        key={meal.strMeal}
+        data-type={"meal"}
+        data-id={meal.strMeal}
+        onClick={clickHandler}
+      >
+        {meal.strMeal}
+      </Clickable>
+    ));
+    setSearchClickables(meals);
   };
 
   // QUESTIONABLE FUNCTION - DUE FOR REVIEW - BREAK INTO SMALLER FUNCTIONS
@@ -981,48 +1019,44 @@ export default function diydelight() {
       let clickHandler;
       // code runs if function is run for browse section
       if (activeComponent === "browse") {
-        clickHandler = async (e) => {
-          let meal = filterForMeal(e.target.dataset.id, data);
-          // data.filter((content) => content.strMeal === e.target.dataset.id);
-          let specificMeal = await getSpecificRecipe(meal[0].idMeal);
-          // Make page disappear, display loader
-
-          animateBrowseViewSwitchToSingleRecipe(specificMeal);
-
-          // e.target.dataset.id
-        };
-
+        // this code shouldnt run because I'm using a different function for browse
+        // clickHandler = async (e) => {
+        //   let meal = filterForMeal(e.target.dataset.id, data);
+        //   // data.filter((content) => content.strMeal === e.target.dataset.id);
+        //   let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+        //   // Make page disappear, display loader
+        //   animateBrowseViewSwitchToSingleRecipe(specificMeal);
+        //   // e.target.dataset.id
+        // };
         // Code runs if function is executed for the purposes of the search feature.
       } else if (activeComponent === "search") {
-        clickHandler = async (e) => {
-          // Animate searchresults off screen
-          await searchViewResultsControls.start("closed");
-          // Generate new view
-          let meal = filterForMeal(e.target.dataset.id, data);
-
-          let specificMeal = await getSpecificRecipe(meal[0].idMeal);
-          console.log(specificMeal.data.meals[0]);
-
-          // Bring animate new view onscreen.
-          setShowSearchClickables(false);
-          setSingleRecipe(specificMeal);
-          setRecipeData(specificMeal.data.meals[0]);
-          setShowSearchedRecipe(true);
-          await loaderAnimControls.start("open");
-          await loaderAnimControls.start("closed");
-          await searchViewSingleRecipeController.start("open");
-        };
+        // clickHandler = async (e) => {
+        //   // Animate searchresults off screen
+        //   await searchViewResultsControls.start("closed");
+        //   // Generate new view
+        //   let meal = filterForMeal(e.target.dataset.id, data);
+        //   let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+        //   console.log(specificMeal.data.meals[0]);
+        //   // Bring animate new view onscreen.
+        //   setShowSearchClickables(false);
+        //   setSingleRecipe(specificMeal);
+        //   setRecipeData(specificMeal.data.meals[0]);
+        //   setShowSearchedRecipe(true);
+        //   await loaderAnimControls.start("open");
+        //   await loaderAnimControls.start("closed");
+        //   await searchViewSingleRecipeController.start("open");
+        // };
       }
       // Code runs to generate clickable buttons from supplied data
-      meals = data.map((meal) => (
-        <Clickable
-          data-type={"meal"}
-          data-id={meal.strMeal}
-          onClick={clickHandler}
-        >
-          {meal.strMeal}
-        </Clickable>
-      ));
+      // meals = data.map((meal) => (
+      //   <Clickable
+      //     data-type={"meal"}
+      //     data-id={meal.strMeal}
+      //     onClick={clickHandler}
+      //   >
+      //     {meal.strMeal}
+      //   </Clickable>
+      // ));
       // browseContent is state that will store the JSX to be rendered.
       if (activeComponent) {
         setBrowseContent(meals);
@@ -1165,8 +1199,15 @@ export default function diydelight() {
   }, [showBrowseRecipe, recipeData, showSearchedRecipe]);
 
   useEffect(() => {
-    generateClickables("search", searchResults.meals, searchViewControls);
+    if (searchResults) {
+      generateSearchClickables(searchResults.meals);
+    }
   }, [searchResults]);
+
+  useEffect(async () => {
+    await searchViewControls.start("open");
+    scrollTop();
+  }, [searchClickables]);
 
   // *************
   //     VIEWS
@@ -1203,6 +1244,7 @@ export default function diydelight() {
                   ref={recipeTitleRef}
                   href={recipeData.strYoutube}
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
                 </a>
@@ -1261,7 +1303,7 @@ export default function diydelight() {
             exit="exit"
             key="mobileRecipeDisplay"
           >
-            <a href={recipeData.strYoutube} target="_blank">
+            <a href={recipeData.strYoutube} rel="noreferrer" target="_blank">
               <MobileImageContainer ref={recipeTitleRef}>
                 {recipeMobileImg}
               </MobileImageContainer>
@@ -1597,20 +1639,9 @@ export default function diydelight() {
               </SearchResultsDisplay>
               {getRecipeView(
                 true,
-                () => {
-                  // REFACTOR TO AVOID USING 'loadSequence' FUNCTION
-                  loadSequence(
-                    async () => {
-                      await searchViewResultsControls.start("closed");
-                      setShowSearchedRecipe(false);
-                      return await searchViewControls.start("open");
-                    },
-
-                    false,
-                    false
-                  ).then((res) => {
-                    setShowSearchClickables(true);
-                  });
+                async () => {
+                  await searchViewControls.start("closed");
+                  generateSearchClickables(searchResults.meals);
                 },
                 searchViewSingleRecipeController
               )}

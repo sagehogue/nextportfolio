@@ -17,6 +17,7 @@ Difficult to read the image on mobile too.
 6. Lots of the component switching animations are partially broken, generally animating out doesn't happen. Can fix by doing a format of async funcs
 that await page generation offscreen and then change state to trigger animation in. 
 7. Currently the page is displaying a view with NO DATA INJECTED when the page first loads or is refreshed. 
+8. Color scheme is kinda terrible and perhaps I should redesign my color usage to feature more neutrals. 
 ***Minor***
 
 1. Ugly side scroll bar is visible on Projects lists. 
@@ -38,37 +39,21 @@ DIYDELIGHT
 ***Major***
 
 
-1. Browse feature yet to be fully implemented.
-    a. Should add a back button to reselect category or cuisine if you don't like your choice of meals. 
-    b. Go Back button is not fully implemented and breaks the app when clicked. Also I don't think browse state is fully cleared when navigating to other parts of the app.
-    I should create a function to clear state as desired and utilize it whenever state is changed through navigation. 
-    c. Browse component does not load if you attempt to load it twice without refreshing. Stale state likely culprit.
-
-
-2. Search feature yet to be fully implemented.
-    a. Lots of animations are broken. Animation when clicking back button is broken. Page Jumps.
+1. Search feature yet to be fully implemented.
+    a. Couple animations have not been implemented ('go back' for recipe and results views)
     b. If you check out a recipe, you should be able to press "back" and have the search results presented again without having to make a second
     search.
-    c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
-    text in it. All I need to do is clear the input box when the user leaves the component.
-    d. Animation is broken if you go from a searched recipe to the search main screen again. exit and enter animations occur simultaneously.
-    e. Search Term not displayed for some reason
-    f. Clicking 'New Random Recipe' does not trigger animations properly. 
-    g. animateBrowseViewSwitchToSingleRecipe might be causing some sequencing inaccuracy
+   
     h. Go Back button does not function. 
-    i. Animations do not perform at: Search -> Browse, Search -> Random Recipe (Nav Link)
+
     j. If there are too many search results, you can't scroll down and view the offscreen clickables! ahh!
 
-3. Animations should be fully implemented.
-    a. There is no exit/enter animation when switching between major components. 
-    b. Search component does not sequence properly. Click button, input disappears, loader appears, loader disappears, results appear is the desired order of events. 
 
-4. Ipad screen size is broken for recipe view
+2. Ipad screen size is broken for recipe view [unknown if still true]
 
-5. No back buttons function. 
-    a. Actually now some do! Browse screen back buttons are functional. 
+3. No Error handling!!!!!!!!!!
 
-6. No Error handling!!!!!!!!!!
+4. No support for clickables extending beyond viewport.
 
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
@@ -79,13 +64,35 @@ DIYDELIGHT
 
 4. Recipe view sometimes animates into view before data has been injected, causing page jump. 
 
-5. ScrollTop not working - Cannot scroll to top of instructions div.
+5. ScrollTop not working - Cannot scroll to top of instructions div on new recipe load
+
+6. Color Scheme? Consider whether or not it is worth to change. 
 
 ***Bugs***
 
 
 
 ***COMPLETE/SOLVED***
+1. Browse Feature
+    a. Should add a back button to reselect category or cuisine if you don't like your choice of meals. 
+    b. Go Back button is not fully implemented and breaks the app when clicked. Also I don't think browse state is fully cleared when navigating to other parts of the app.
+    I should create a function to clear state as desired and utilize it whenever state is changed through navigation. 
+    c. Browse component does not load if you attempt to load it twice without refreshing. Stale state likely culprit.
+
+2. Search bugs
+ c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
+    text in it. All I need to do is clear the input box when the user leaves the component.
+    d. Animation is broken if you go from a searched recipe to the search main screen again. exit and enter animations occur simultaneously.
+    e. Search Term not displayed for some reason
+    f. Clicking 'New Random Recipe' does not trigger animations properly. 
+    g. animateBrowseViewSwitchToSingleRecipe might be causing some sequencing inaccuracy
+
+3. Animations should be fully implemented.
+    a. There is no exit/enter animation when switching between major components. 
+    b. Search component does not sequence properly. Click button, input disappears, loader appears, loader disappears, results appear is the desired order of events. 
+    i. Animations do not perform at: Search -> Browse, Search -> Random Recipe (Nav Link)
+
+
 (search)f. I think I can solve the issue of simultaneous animations occuring when a recipe clickable is clicked by using useEffect to trigger the animation at the time of data population
 (search)a. If no results are found, a "go back" button should be presented. Currently there is one but it has no functionality. 
 * Buttons DO NOT show pointer when hovered. 
