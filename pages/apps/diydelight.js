@@ -386,110 +386,74 @@ export default function diydelight() {
   // DATA / STATE
   // *************
 
-  //  APP STATE / DATA
+  // [UI]
 
-  let resetState = (view) => {
-    setMealCuisines([]);
-    setMealCategories([]);
-    setRecipeData([]);
-    setLoading(true);
-    setRecipeImg(false);
-    setMobileRecipeImg(false);
-    setRecipeInstructions(false);
-    setRecipeIngredients(false);
-    setSingleRecipe(false);
-    setBrowseView(false);
-    setBrowseContent(false);
-    setShowBrowseRecipe(false);
-    setShowBrowseClickables(false);
-    setMealGroup(false);
-    setSearchTerm(false);
-    setSearchResults(false);
-    setShowSearchClickables(false);
-    setSearchClickables(false);
-    setShowSearchedRecipe(false);
-    setSearchClickables(false);
-    // if (view === "random") {
-    //   setMealCuisines([])
-    //   setMealCategories([])
-    //   setRecipeData([])
-    //   setLoading(true)
-    //   setRecipeImg(false)
-    //   setMobileRecipeImg(false)
-    //   setRecipeInstructions(false)
-    //   setRecipeIngredients(false)
-    //   setSingleRecipe(false)
-    //   setBrowseView(false)
-    //   setBrowseContent(false)
-    //   setShowBrowseRecipe(false)
-    //   setShowBrowseClickables(false)
-    // setMealGroup(false)
-    // setSearchTerm(false)
-    // setSearchResults(false)
-    // setShowSearchClickables(false)
-    // setSearchClickables(false);
-    // setShowSearchedRecipe(false)
-    // setSearchClickables(false)
-    // } else if (view === "browse") {
-    //   setMealCuisines([]);
-    //   setMealCategories([]);
-    //   setRecipeData([]);
-    //   setLoading(true);
-    //   setRecipeImg(false);
-    //   setMobileRecipeImg(false);
-    //   setRecipeInstructions(false);
-    //   setRecipeIngredients(false);
-    //   setSingleRecipe(false);
-    // }
-  };
-
-  // determines which major view is to be displayed
+  //  1. determines which major view is to be displayed
   let [activeComponent, setActiveComponent] = useState("random");
 
-  // List of cuisines to browse recipes by
-  let [mealCuisines, setMealCuisines] = useState([]);
-
-  // List of categories to browse recipes by
-  let [mealCategories, setMealCategories] = useState([]);
-
-  // API data for a single selected recipe
-  let [recipeData, setRecipeData] = useState([]);
-
-  // Whether or not to show the loader
+  //  2. Whether or not to show the loader
   let [isLoading, setLoading] = useState(true);
 
-  // SINGLE RECIPE STATE
+  // RANDOM RECIPE STATE - Due for a refactor as data is shared between random recipe and single recipe view for browse & search.
 
-  // Desktop JSX Image
+  //  3. API data for a single selected recipe
+  let [recipeData, setRecipeData] = useState([]);
+
+  //  4. Desktop JSX Image
   let [recipeImg, setRecipeImg] = useState(false);
-  // Mobile JSX Image
+
+  //  5. Mobile JSX Image
   let [recipeMobileImg, setMobileRecipeImg] = useState(false);
-  // Recipe Instructions with added line breaks
+
+  //  6. Recipe Instructions with added line breaks
   let [recipeInstructions, setRecipeInstructions] = useState(false);
-  // Ingredient Objects - used to create ingredient table
+
+  //  7. Ingredient Objects - used to create ingredient table
   let [recipeIngredients, setRecipeIngredients] = useState(false);
 
-  // for browse view selected recipe. eventually should refactor to be the only place a "single recipe view" data object is stored.
+  // [BROWSE]
+
+  //  8. List of cuisines to browse recipes by
+  let [mealCuisines, setMealCuisines] = useState([]);
+
+  //  9. List of categories to browse recipes by
+  let [mealCategories, setMealCategories] = useState([]);
+
+  //  10. for browse view selected recipe. eventually should refactor to be the only place a "single recipe view" data object is stored.
   let [singleRecipe, setSingleRecipe] = useState(false);
 
-  let [browseView, setBrowseView] = useState(false);
-
-  let [browseContent, setBrowseContent] = useState(false);
-
+  //  11. Whether or not to show the single recipe that is stored in state
   let [showBrowseRecipe, setShowBrowseRecipe] = useState(false);
 
-  let [showBrowseClickables, setShowBrowseClickables] = useState(false);
+  //  12. Changes which 'clickables' are to be generated to be displayed on the browse screen
+  let [browseView, setBrowseView] = useState(false);
 
-  // Where meals are stored after a category or cuisine is searched
+  //    13.
+  let [browseClickables, setBrowseClickables] = useState([]);
+
+  //  14. What content is on the browse screen
+  let [browseContent, setBrowseContent] = useState(false);
+
+  //  15. Where meals are stored after a category or cuisine is searched
   let [mealGroup, setMealGroup] = useState(false);
 
-  // User input character string - to be sent to API
+  // [SEARCH]
+
+  //  16. User input character string - to be sent to API
   let [searchTerm, setSearchTerm] = useState(false);
-  // Whether or not to display search prompt and input to users
+
+  //  17. Whether or not to display search prompt and input to users
   let [showSearchInput, setShowSearchInput] = useState(false);
+  // 18.
   let [searchResults, setSearchResults] = useState(false);
+
+  // 19.
   let [showSearchClickables, setShowSearchClickables] = useState(false);
+
+  // 20.
   let [searchClickables, setSearchClickables] = useState(false);
+
+  // 21.
   let [showSearchedRecipe, setShowSearchedRecipe] = useState(false);
 
   // *************
@@ -602,12 +566,6 @@ export default function diydelight() {
 
   // Fetch random recipe data, generate images and store in state as well as relevant data.
   let getRandomRecipe = async (reload = false) => {
-    // result = await axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
-    // if (reload) {
-    // } else {
-    //   loadRecipeState(result.data.meals[0]);
-    // }
-    // return result;
     return axios(`https://www.themealdb.com/api/json/v1/1/random.php`);
   };
 
@@ -619,6 +577,15 @@ export default function diydelight() {
     console.log(result);
     loadRecipeState(result.data.meals[0]);
     return result;
+  };
+
+  // clear stale browse data
+  const clearBrowseState = () => {
+    setSingleRecipe(false);
+    setBrowseView(false);
+    setBrowseContent(false);
+    setShowBrowseRecipe(false);
+    setMealGroup(false);
   };
 
   // clear search state
@@ -744,6 +711,7 @@ export default function diydelight() {
   let animateGetNewRandomRecipe = async () => {
     await closeCurrentView();
     await loaderAnimControls.start("open");
+    clearBrowseState();
     clearSearchData();
     setActiveComponent("random");
     getRandomRecipe().then(async (data) => {
@@ -762,7 +730,7 @@ export default function diydelight() {
     // display none old view
 
     setLoading(true);
-    setShowBrowseClickables(false);
+
     await loaderAnimControls.start("open");
     await loaderAnimControls.start("closed");
     setRecipeData(specificMeal.data.meals[0]);
@@ -849,21 +817,20 @@ export default function diydelight() {
 
   let loadBrowseView = async () => {
     await closeCurrentView();
+    clearBrowseState();
     clearSearchData();
-    await loaderAnimControls.start("open");
-    setActiveComponent("browse");
-    let results = {
-      categories: (await getMealCategories()).data.meals,
-      cuisines: (await getMealCuisines()).data.meals,
-    };
+    // await loaderAnimControls.start("open");
+    // let categories = (await getMealCategories()).data.meals;
+    // let cuisines = (await getMealCuisines()).data.meals;
+    // await loaderAnimControls.start("closed");
 
-    setMealCategories(results.categories);
-    setMealCuisines(results.cuisines);
     setBrowseView("category");
-    setShowBrowseClickables(true);
-    await loaderAnimControls.start("closed");
+    setActiveComponent("browse");
+    // setMealCategories(categories);
+    // setMealCuisines(cuisines);
+
     // browseViewControls.start("open");
-    browseViewButtonGridControls.start("open");
+
     // Redundant state clearing (I think) - but perhaps not, check if it handles single group data and if that is handled elsewhere
     // setRecipeData(false);
     // setSingleRecipe(false);
@@ -909,36 +876,111 @@ export default function diydelight() {
     });
   };
 
+  // Takes a meal string, group of meal objects from API, returns match by ID
+  const filterForMeal = (mealString, mealGroup) => {
+    return mealGroup.filter((meal) => meal.strMeal === mealString);
+  };
+
+  const generateMealGroupClickables = (mealGroup) => {
+    let clickHandler;
+    clickHandler = async (e) => {
+      let meal = filterForMeal(e.target.dataset.id, mealGroup);
+      // data.filter((content) => content.strMeal === e.target.dataset.id);
+      let specificMeal = await getSpecificRecipe(meal[0].idMeal);
+      console.log(specificMeal);
+      console.log(meal);
+      // Make page disappear, display loader
+
+      animateBrowseViewSwitchToSingleRecipe(specificMeal);
+
+      // e.target.dataset.id
+    };
+    return mealGroup.map((meal) => (
+      <Clickable
+        data-type={"meal"}
+        data-id={meal.strMeal}
+        onClick={clickHandler}
+      >
+        {meal.strMeal}
+      </Clickable>
+    ));
+  };
+
+  let generateBrowseClickables = (selection) => {
+    // Clickhandler for clickable category/cuisine buttons
+    let clickHandler = async (e) => {
+      await browseViewControls.start("closed");
+      let query;
+
+      // ID of category or cuisine - the query term
+      let id = e.target.dataset.id;
+
+      // Checks if cuisine or category then builds query string - each type uses a different API url
+      if (e.target.dataset.type === "cuisine") {
+        query = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${id}`;
+      } else {
+        query = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${id}`;
+      }
+
+      loaderAnimControls.start("open");
+
+      let res = await axios(query);
+      // Mealgroup contains data from user selected query - this is relevant to navigating back after selecting individual recipe.
+      setMealGroup(res.data.meals);
+      setBrowseView("mealGroup");
+    };
+    // Generate JSX to store in state, to later be filtered by the user.
+    let categoryJSX = mealCategories.map((category) => (
+      <Clickable
+        data-type={"category"}
+        data-id={category.strCategory}
+        onClick={clickHandler}
+      >
+        {category.strCategory}
+      </Clickable>
+    ));
+    let cuisineJSX = mealCuisines.map((cuisine) => (
+      <Clickable
+        data-type={"cuisine"}
+        data-id={cuisine.strArea}
+        onClick={clickHandler}
+      >
+        {cuisine.strArea}
+      </Clickable>
+    ));
+
+    setBrowseClickables([...categoryJSX, ...cuisineJSX]);
+  };
+
+  // QUESTIONABLE FUNCTION - DUE FOR REVIEW - BREAK INTO SMALLER FUNCTIONS
   let generateClickables = async (state, data = false, animationController) => {
     let cuisines, categories, search, meals;
 
     // code runs if function is supplied with data - data is used to create single recipe view
     if (data) {
+      // clickHandler function - different for search and browse clickable buttons
       let clickHandler;
       // code runs if function is run for browse section
-      if (state === "all" || state === "cuisine" || state === "category") {
+      if (activeComponent === "browse") {
         clickHandler = async (e) => {
-          let meal = data.filter(
-            (content) => content.strMeal === e.target.dataset.id
-          );
+          let meal = filterForMeal(e.target.dataset.id, data);
+          // data.filter((content) => content.strMeal === e.target.dataset.id);
           let specificMeal = await getSpecificRecipe(meal[0].idMeal);
           // Make page disappear, display loader
 
-          console.log(specificMeal.data.meals[0]);
           animateBrowseViewSwitchToSingleRecipe(specificMeal);
 
           // e.target.dataset.id
         };
 
         // Code runs if function is executed for the purposes of the search feature.
-      } else if (state === "search") {
+      } else if (activeComponent === "search") {
         clickHandler = async (e) => {
           // Animate searchresults off screen
           await searchViewResultsControls.start("closed");
           // Generate new view
-          let meal = data.filter(
-            (content) => content.strMeal === e.target.dataset.id
-          );
+          let meal = filterForMeal(e.target.dataset.id, data);
+
           let specificMeal = await getSpecificRecipe(meal[0].idMeal);
           console.log(specificMeal.data.meals[0]);
 
@@ -950,10 +992,6 @@ export default function diydelight() {
           await loaderAnimControls.start("open");
           await loaderAnimControls.start("closed");
           await searchViewSingleRecipeController.start("open");
-          // loadSequence(async () => {
-
-          // });
-          // e.target.dataset.id
         };
       }
       // Code runs to generate clickable buttons from supplied data
@@ -967,9 +1005,9 @@ export default function diydelight() {
         </Clickable>
       ));
       // browseContent is state that will store the JSX to be rendered.
-      if (state === "all" || state === "cuisine" || state === "category") {
+      if (activeComponent) {
         setBrowseContent(meals);
-      } else if (state === "search") {
+      } else if (activeComponent === "search") {
         setSearchClickables(meals);
       }
       await animationController.start("open");
@@ -989,6 +1027,7 @@ export default function diydelight() {
         } else {
           query = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${id}`;
         }
+        // MOVING AWAY FROM 'loadSequence' FUNCTIONS
         loadSequence(
           async () => await axios(query),
           true,
@@ -1007,25 +1046,6 @@ export default function diydelight() {
           })
           .catch((err) => console.log(err));
       };
-
-      cuisines = mealCuisines.map((cuisine) => (
-        <Clickable
-          data-type={"cuisine"}
-          data-id={cuisine.strArea}
-          onClick={clickHandler}
-        >
-          {cuisine.strArea}
-        </Clickable>
-      ));
-      categories = mealCategories.map((category) => (
-        <Clickable
-          data-type={"category"}
-          data-id={category.strCategory}
-          onClick={clickHandler}
-        >
-          {category.strCategory}
-        </Clickable>
-      ));
       switch (state) {
         case "all":
           setBrowseContent([...cuisines, ...categories]);
@@ -1043,18 +1063,82 @@ export default function diydelight() {
     }
   };
 
-  useEffect(() => {
+  // Once we have recipe categories we generate buttons for each category and save in state to display on screen.
+  useEffect(async () => {
+    if (browseClickables.length < 1) {
+      generateBrowseClickables();
+    } else {
+    }
+  }, [mealCuisines, mealCategories]);
+
+  // Function runs on page load
+  useEffect(async () => {
+    // Animates first page load for random recipe component
     initialLoadSequence();
+
+    // Gets data for browse component's clickable buttons.
+    let categories = (await getMealCategories()).data.meals;
+    let cuisines = (await getMealCuisines()).data.meals;
+
+    setMealCategories(categories);
+    setMealCuisines(cuisines);
   }, []);
 
-  // When browseview changes, new clickables must be generated to present the user with the new data.
-  useEffect(() => {
-    generateClickables(browseView, false, browseViewControls);
+  // When browseview changes, clickables must be refiltered and placed in browsecontent
+  useEffect(async () => {
+    console.log("browseview change");
+    if (mealGroup) {
+      console.log("animating mealgroup into view");
+      setLoading(false);
+      await loaderAnimControls.start("closed");
+      await browseViewControls.start("open");
+    } else {
+      if (browseView === "all") {
+        console.log("display all browse clickables");
+        setBrowseContent(browseClickables);
+      } else {
+        console.log(browseClickables);
+        console.log("display some browse clickables");
+        let results = browseClickables.filter((clickable) => {
+          console.log(
+            clickable.props["data-type"],
+            browseView,
+            clickable.props["data-type"] === browseView
+          );
+          return clickable.props["data-type"] === browseView;
+        });
+        console.log(results);
+        setBrowseContent(results);
+      }
+    }
+    // generateClickables(browseView, false, browseViewControls);
   }, [browseView]);
 
+  useEffect(async () => {
+    if (activeComponent === "browse" && !mealGroup) {
+      if (browseClickables.length <= 0) {
+        generateBrowseClickables();
+      }
+      console.log(browseContent);
+      await loaderAnimControls.start("closed");
+      browseViewControls.start("open");
+      await browseViewButtonGridControls.start("open");
+    }
+  }, [browseContent]);
+
   useEffect(() => {
-    console.log("Should generate search clickables");
-    console.log(searchTerm);
+    if (mealGroup.length > 0) {
+      console.log("Mealgroup clicks");
+      setBrowseContent(generateMealGroupClickables(mealGroup));
+    }
+  }, [mealGroup]);
+
+  useEffect(() => {
+    // GENERATE NEW VIEW
+    // NEW VIEW IN
+  }, [browseClickables]);
+
+  useEffect(() => {
     generateClickables("search", searchResults.meals, searchViewControls);
   }, [searchResults]);
 
@@ -1103,9 +1187,6 @@ export default function diydelight() {
                   marginTop="1rem"
                   padding={"1rem 2rem"}
                   clickHandler={async () => {
-                    // let randomRecipe = getRandomRecipe.bind(this, true);
-                    // loadSequence(getRandomRecipe);
-                    // await closeCurrentView();
                     await animateGetNewRandomRecipe();
                   }}
                 >
@@ -1338,6 +1419,7 @@ export default function diydelight() {
                   ? getRecipeView(
                       true,
                       () => {
+                        // MOVING AWAY FROM 'loadSequence' FUNCTION
                         loadSequence(
                           () => {
                             setSingleRecipe(false);
@@ -1345,7 +1427,7 @@ export default function diydelight() {
                           },
                           false,
                           false
-                        ).then(() => setShowBrowseClickables(true));
+                        );
                       },
                       browseRecipeViewController
                     )
@@ -1377,7 +1459,6 @@ export default function diydelight() {
                       type="text"
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
-                          // loadSequence(handleSearch);
                           handleSearch();
                         }
                       }}
@@ -1390,8 +1471,6 @@ export default function diydelight() {
                       marginTop="1rem"
                       padding="1rem 2rem"
                       clickHandler={async () => {
-                        // loadSequence(handleSearch);
-
                         handleSearch();
                       }}
                     >
@@ -1420,6 +1499,7 @@ export default function diydelight() {
                   <SearchReturn
                     onClick={() => {
                       const node = searchInputRef.current;
+                      // MOVING AWAY FROM 'loadSequence' FUNCTION
                       loadSequence(
                         async () => {
                           await searchViewResultsControls.start("closed");
@@ -1452,6 +1532,7 @@ export default function diydelight() {
               {getRecipeView(
                 true,
                 () => {
+                  // REFACTOR TO AVOID USING 'loadSequence' FUNCTION
                   loadSequence(
                     async () => {
                       await searchViewResultsControls.start("closed");
