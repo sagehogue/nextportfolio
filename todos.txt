@@ -66,6 +66,9 @@ DIYDELIGHT
 4. Ipad screen size is broken for recipe view
 
 5. No back buttons function. 
+    a. Actually now some do! Browse screen back buttons are functional. 
+
+6. No Error handling!!!!!!!!!!
 
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
@@ -75,6 +78,8 @@ DIYDELIGHT
 3. Recipe image does not change at the same time as the text.. should change offscreen ideally. At least the old image should go away before it appears again. 
 
 4. Recipe view sometimes animates into view before data has been injected, causing page jump. 
+
+5. ScrollTop not working - Cannot scroll to top of instructions div.
 
 ***Bugs***
 

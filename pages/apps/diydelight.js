@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
@@ -469,6 +469,7 @@ export default function diydelight() {
   // *************
 
   let searchInputRef = React.createRef();
+  let recipeTitleRef = useRef();
 
   // *************
   //   FUNCTIONS
@@ -613,6 +614,14 @@ export default function diydelight() {
     setShowSearchInput(true);
   };
 
+  // scroll to top of instructions when loading new recipe
+  const scrollTop = () => {
+    if (recipeTitleRef.current) {
+      console.log(recipeTitleRef.current);
+      recipeTitleRef.current.scrollTo(0, 0, { behavior: "smooth" });
+    }
+  };
+
   // *************
   //   ANIMATION
   // *************
@@ -731,6 +740,7 @@ export default function diydelight() {
       await loadRecipeState(data.data.meals[0]);
       setLoading(false);
       await recipeViewControls.start("open");
+      scrollTop();
     });
   };
 
@@ -756,10 +766,8 @@ export default function diydelight() {
       });
     };
     func().then(async (res) => {
-      console.log(res);
-
-      console.log(singleRecipe, showBrowseRecipe, isLoading);
       await browseRecipeViewController.start("open");
+      scrollTop();
     });
   };
 
@@ -1022,6 +1030,7 @@ export default function diydelight() {
         setSearchClickables(meals);
       }
       await animationController.start("open");
+      scrollTop();
       // Browse view - case: displaying options
     } else {
       // default case: generate mealgroups from state
@@ -1071,6 +1080,7 @@ export default function diydelight() {
           break;
       }
       animationController.start("open");
+      scrollTop();
     }
   };
 
@@ -1143,10 +1153,16 @@ export default function diydelight() {
     displayMealGroup();
   }, [mealGroup]);
 
+  // no real use for this
+  // useEffect(() => {
+  //   // GENERATE NEW VIEW
+  //   // NEW VIEW IN
+  // }, [browseClickables]);
+
+  // Scrolls to top of instructions on page load
   useEffect(() => {
-    // GENERATE NEW VIEW
-    // NEW VIEW IN
-  }, [browseClickables]);
+    scrollTop();
+  }, [showBrowseRecipe, recipeData, showSearchedRecipe]);
 
   useEffect(() => {
     generateClickables("search", searchResults.meals, searchViewControls);
@@ -1164,6 +1180,10 @@ export default function diydelight() {
   ) => {
     if (typeof window !== "undefined") {
       // determine desktop or mobile view
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       if (window.innerWidth > 750) {
         return (
           <>
@@ -1179,7 +1199,11 @@ export default function diydelight() {
                 <DesktopImageContainer>{recipeImg}</DesktopImageContainer>
               </DesktopYTLink>
               <DesktopInstructions>
-                <a href={recipeData.strYoutube} target="_blank">
+                <a
+                  ref={recipeTitleRef}
+                  href={recipeData.strYoutube}
+                  target="_blank"
+                >
                   <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
                 </a>
 
@@ -1238,7 +1262,9 @@ export default function diydelight() {
             key="mobileRecipeDisplay"
           >
             <a href={recipeData.strYoutube} target="_blank">
-              <MobileImageContainer>{recipeMobileImg}</MobileImageContainer>
+              <MobileImageContainer ref={recipeTitleRef}>
+                {recipeMobileImg}
+              </MobileImageContainer>
 
               <RecipeTitle>{recipeData.strMeal}</RecipeTitle>
               <RecipeMeta>
@@ -1569,7 +1595,6 @@ export default function diydelight() {
                   {searchResults ? searchClickables : ""}
                 </ClickableGrid>
               </SearchResultsDisplay>
-
               {getRecipeView(
                 true,
                 () => {
