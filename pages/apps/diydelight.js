@@ -236,6 +236,7 @@ const BrowseTabs = styled.div`
   & button {
     flex-grow: 1;
   }
+  margin-left: 2rem;
   margin-right: auto;
   // margin-bottom: auto;
   @media screen and (min-width: 900px) {
@@ -267,9 +268,10 @@ const ClickableGrid = styled.div`
   margin-bottom: auto;
 
   @media screen and (min-width: 900px) {
-    margin-top: 3rem;
+    // margin-top: 0rem;
     max-height: 80vh;
-    padding: 5rem;
+    padding: 2rem;
+    padding-top: 1rem;
     grid-template-columns: repeat(6, 1fr);
   }
 `;
@@ -379,6 +381,12 @@ const SearchBackArrow = styled(AiOutlineArrowLeft)`
 const BlobImage = styled.img`
   width: ${(props) => (props.width ? props.width : "100%")};
   height: ${(props) => (props.height ? props.height : "100%")};
+`;
+
+const Spacer = styled.span`
+  padding: 0;
+  background-color: transparent;
+  padding-left: ${(props) => (props.width ? props.width : "0")};
 `;
 
 export default function diydelight() {
@@ -608,7 +616,10 @@ export default function diydelight() {
   // *************
   //   ANIMATION
   // *************
-  //
+  // Animation Variables
+
+  let animDuration = 0.75;
+
   // Variants are animation states that can be utilized by feeding their label string to the animate prop on a motion component.
 
   const variants = {
@@ -627,7 +638,7 @@ export default function diydelight() {
       },
     },
     exit: { opacity: 0, y: "100%" },
-    default: { duration: 1.25 },
+    default: { duration: animDuration },
   };
 
   const desktopVariants = {
@@ -659,7 +670,7 @@ export default function diydelight() {
     closed: {
       ...variants.closed,
       y: 0,
-      transition: 1250,
+      transition: 1000,
       transitionEnd: {
         display: "none",
       },
@@ -948,7 +959,7 @@ export default function diydelight() {
         {cuisine.strArea}
       </Clickable>
     ));
-
+    console.log(mealCuisines, mealCategories);
     setBrowseClickables([...categoryJSX, ...cuisineJSX]);
   };
 
@@ -1065,10 +1076,7 @@ export default function diydelight() {
 
   // Once we have recipe categories we generate buttons for each category and save in state to display on screen.
   useEffect(async () => {
-    if (browseClickables.length < 1) {
-      generateBrowseClickables();
-    } else {
-    }
+    generateBrowseClickables();
   }, [mealCuisines, mealCategories]);
 
   // Function runs on page load
@@ -1079,7 +1087,7 @@ export default function diydelight() {
     // Gets data for browse component's clickable buttons.
     let categories = (await getMealCategories()).data.meals;
     let cuisines = (await getMealCuisines()).data.meals;
-
+    console.log(cuisines, categories);
     setMealCategories(categories);
     setMealCuisines(cuisines);
   }, []);
@@ -1093,6 +1101,8 @@ export default function diydelight() {
       await loaderAnimControls.start("closed");
       await browseViewControls.start("open");
     } else {
+      console.log(browseView);
+
       if (browseView === "all") {
         console.log("display all browse clickables");
         setBrowseContent(browseClickables);
@@ -1123,14 +1133,14 @@ export default function diydelight() {
       await loaderAnimControls.start("closed");
       browseViewControls.start("open");
       await browseViewButtonGridControls.start("open");
+    } else if (activeComponent === "browse" && mealGroup) {
+      browseViewControls.start("open");
+      await browseViewButtonGridControls.start("open");
     }
   }, [browseContent]);
 
   useEffect(() => {
-    if (mealGroup.length > 0) {
-      console.log("Mealgroup clicks");
-      setBrowseContent(generateMealGroupClickables(mealGroup));
-    }
+    displayMealGroup();
   }, [mealGroup]);
 
   useEffect(() => {
@@ -1280,6 +1290,30 @@ export default function diydelight() {
     }
   };
 
+  // View Controls
+  let displayMealGroup = () => {
+    if (mealGroup.length > 0) {
+      setBrowseContent(generateMealGroupClickables(mealGroup));
+    }
+  };
+
+  let mealGroupBackButton = (
+    <Button
+      clickHandler={async () => {
+        await browseViewControls.start("closed");
+        loadBrowseView();
+      }}
+      bgColor={"#FC7419"}
+      color={"#FFE9E9"}
+      padding={".5rem 1rem"}
+      marginLeft="2rem"
+      marginTop="1rem"
+    >
+      <BackArrow size={20} />
+      <Spacer width={".5rem"} />
+      Go Back
+    </Button>
+  );
   // Break this function up. I think I should use a useEffect listener on the searchResult state. When change is detected,
   // loading animation can end and UI can be updated with search results.
 
@@ -1363,47 +1397,51 @@ export default function diydelight() {
                   exit="exit"
                   key="browseContainer"
                 >
-                  <BrowseTabs>
-                    <Button
-                      bgColor={"#FC7419"}
-                      color={"#FFE9E9"}
-                      padding={".5rem 1rem"}
-                      clickHandler={async () => {
-                        await browseViewButtonGridControls.start("closed");
-                        setBrowseView("all");
-                        await browseViewButtonGridControls.start("open");
-                      }}
-                    >
-                      All
-                    </Button>
-                    <CategoryButton
-                      bgColor={"#FC7419"}
-                      color={"#FFE9E9"}
-                      padding={".5rem 1rem"}
-                      clickHandler={async () => {
-                        await browseViewButtonGridControls.start("closed");
-                        setBrowseView("category");
-                        await browseViewButtonGridControls.start("open");
-                      }}
-                      active={browseView}
-                    >
-                      Category
-                    </CategoryButton>
-                    <CuisineButton
-                      bgColor={"#FC7419"}
-                      color={"#FFE9E9"}
-                      padding={".5rem 1rem"}
-                      clickHandler={async () => {
-                        await browseViewButtonGridControls.start("closed");
-                        setBrowseView("cuisine");
-                        await browseViewButtonGridControls.start("open");
-                      }}
-                      active={browseView}
-                    >
-                      Cuisine
-                    </CuisineButton>
-                    {/* 'Clickables' are either categories, cuisines, or specific recipe names. The corresponding data will be loaded when a clickable is clicked. */}
-                  </BrowseTabs>
+                  {mealGroup ? (
+                    mealGroupBackButton
+                  ) : (
+                    <BrowseTabs>
+                      <Button
+                        bgColor={"#FC7419"}
+                        color={"#FFE9E9"}
+                        padding={".5rem 1rem"}
+                        clickHandler={async () => {
+                          await browseViewButtonGridControls.start("closed");
+                          setBrowseView("all");
+                          await browseViewButtonGridControls.start("open");
+                        }}
+                      >
+                        All
+                      </Button>
+                      <CategoryButton
+                        bgColor={"#FC7419"}
+                        color={"#FFE9E9"}
+                        padding={".5rem 1rem"}
+                        clickHandler={async () => {
+                          await browseViewButtonGridControls.start("closed");
+                          setBrowseView("category");
+                          await browseViewButtonGridControls.start("open");
+                        }}
+                        active={browseView}
+                      >
+                        Category
+                      </CategoryButton>
+                      <CuisineButton
+                        bgColor={"#FC7419"}
+                        color={"#FFE9E9"}
+                        padding={".5rem 1rem"}
+                        clickHandler={async () => {
+                          await browseViewButtonGridControls.start("closed");
+                          setBrowseView("cuisine");
+                          await browseViewButtonGridControls.start("open");
+                        }}
+                        active={browseView}
+                      >
+                        Cuisine
+                      </CuisineButton>
+                      {/* 'Clickables' are either categories, cuisines, or specific recipe names. The corresponding data will be loaded when a clickable is clicked. */}
+                    </BrowseTabs>
+                  )}
                   <AnimateGrid
                     animate={browseViewButtonGridControls}
                     initial={"closed"}
@@ -1418,16 +1456,19 @@ export default function diydelight() {
                 {showBrowseRecipe
                   ? getRecipeView(
                       true,
-                      () => {
+                      async () => {
                         // MOVING AWAY FROM 'loadSequence' FUNCTION
-                        loadSequence(
-                          () => {
-                            setSingleRecipe(false);
-                            setShowBrowseRecipe(false);
-                          },
-                          false,
-                          false
-                        );
+                        // loadSequence(
+                        //   () => {
+                        await browseRecipeViewController.start("closed");
+                        setSingleRecipe(false);
+                        setShowBrowseRecipe(false);
+                        setBrowseView("mealGroup");
+                        displayMealGroup();
+                        //   },
+                        //   false,
+                        //   false
+                        // );
                       },
                       browseRecipeViewController
                     )
