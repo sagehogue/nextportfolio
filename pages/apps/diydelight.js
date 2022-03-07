@@ -986,7 +986,7 @@ export default function Diydelight() {
       let specificMeal = await getSpecificRecipe(meal[0].idMeal);
       console.log(specificMeal.data.meals[0]);
 
-      // Bring animate new view onscreen.
+      // Animate new view onscreen.
       setShowSearchClickables(false);
       setSingleRecipe(specificMeal);
       setRecipeData(specificMeal.data.meals[0]);
@@ -1032,7 +1032,7 @@ export default function Diydelight() {
       } else if (activeComponent === "search") {
         // clickHandler = async (e) => {
         //   // Animate searchresults off screen
-        //   await searchViewResultsControls.start("closed");
+        // await searchViewResultsControls.start("closed");
         //   // Generate new view
         //   let meal = filterForMeal(e.target.dataset.id, data);
         //   let specificMeal = await getSpecificRecipe(meal[0].idMeal);
@@ -1611,19 +1611,11 @@ export default function Diydelight() {
                       // MOVING AWAY FROM 'loadSequence' FUNCTION
                       loadSequence(
                         async () => {
+                          console.log("Hot refresh works");
                           await searchViewResultsControls.start("closed");
-                          setSearchTerm(false);
-                          setSearchResults(false);
-                          setSearchClickables(false);
-                          setShowSearchedRecipe(false);
-                          setSingleRecipe(false);
-                          setRecipeData(false);
-                          setActiveComponent("search");
-                          setShowSearchInput(true);
+                          loadSearchComponent();
+
                           await searchViewControls.start("open");
-                          if (searchTerm) {
-                            node.value = "";
-                          }
                         },
                         false,
                         false
@@ -1640,8 +1632,13 @@ export default function Diydelight() {
               {getRecipeView(
                 true,
                 async () => {
-                  await searchViewControls.start("closed");
+                  await searchViewSingleRecipeController.start("closed");
+                  setSingleRecipe(false);
                   generateSearchClickables(searchResults.meals);
+                  setShowSearchClickables(true);
+                  await searchViewResultsControls.start("open");
+
+                  // setRecipeData(specificMeal.data.meals[0]);
                 },
                 searchViewSingleRecipeController
               )}
