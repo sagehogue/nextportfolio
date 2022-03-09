@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  getDerivedStateFromError,
+} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
@@ -389,6 +394,86 @@ const Spacer = styled.span`
   padding-left: ${(props) => (props.width ? props.width : "0")};
 `;
 
+// Error View
+
+let ErrorPage = () => (
+  <Layout>
+    <PageContent>
+      {/* Title Lettering */}
+      <AppHeading>DIY Delight</AppHeading>
+      <ErrorMessage>
+        <ErrorHeadline>FATAL ERROR 👿</ErrorHeadline>
+        <ErrorBody>
+          <span>
+            The app has encountered an error that has caused it to crash.
+          </span>{" "}
+          <br />
+          <br />
+          <span>Please reload the page.</span>
+        </ErrorBody>
+      </ErrorMessage>
+    </PageContent>
+  </Layout>
+);
+
+const ErrorHeadline = styled.h1`
+  color: #000;
+  font-size: 2rem;
+  text-align: center;
+`;
+
+const ErrorBody = styled.p`
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: left;
+  max-width: 85vw;
+  padding: 0.75rem;
+  margin: 2rem auto 0 auto;
+  background-color: #fdfdfd;
+  @media screen and (min-width: 620px) {
+    max-width: 75vw;
+  }
+  @media screen and (min-width: 750px) {
+    max-width: 60vw;
+  }
+  @media screen and (min-width: 900px) {
+    max-width: 45vw;
+  }
+  @media screen and (min-width: 1050px) {
+    max-width: 30vw;
+  }
+  @media screen and (min-width: 1200px) {
+    max-width: 25vw;
+    padding: 1rem;
+  }
+`;
+
+const ErrorMessage = styled.section`
+  margin-top: 3rem;
+  min-height: 87vh;
+`;
+
+// Error Handler - doesn't handle async errors
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    console.log(error);
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <ErrorPage />;
+    }
+    return this.props.children;
+  }
+}
+
 export default function Diydelight() {
   // *************
   // DATA / STATE
@@ -500,10 +585,8 @@ export default function Diydelight() {
 
   // set single recipe data
   let loadRecipeState = async (meal) => {
-    console.log(meal);
     let ingredients = [],
       measurements = [];
-    console.log(meal.strMealThumb);
     let imagePromise = await fetch(meal.strMealThumb)
       .then((response) => response.blob())
       .then((imageBlob) => {
@@ -579,11 +662,9 @@ export default function Diydelight() {
   };
 
   let getSpecificRecipe = async (id) => {
-    console.log(id);
     let result = await axios(
       `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
     );
-    console.log(result);
     loadRecipeState(result.data.meals[0]);
     return result;
   };
@@ -617,7 +698,6 @@ export default function Diydelight() {
   // scroll to top of instructions when loading new recipe
   const scrollTop = () => {
     if (recipeTitleRef.current) {
-      console.log(recipeTitleRef.current);
       recipeTitleRef.current.scrollTo(0, 0, { behavior: "smooth" });
     }
   };
@@ -718,7 +798,6 @@ export default function Diydelight() {
   // Controls initial page load animation
   let initialLoadSequence = async () => {
     getRandomRecipe().then(async (data) => {
-      console.log(data);
       await loadRecipeState(data.data.meals[0]);
       await loaderAnimControls.start("open");
       await loaderAnimControls.start("closed");
@@ -789,7 +868,6 @@ export default function Diydelight() {
   };
 
   let closeCurrentView = async () => {
-    console.log(activeComponent);
     // Case RecipeView
     if ((activeComponent = "random")) {
       await recipeViewControls.start("closed");
@@ -906,8 +984,6 @@ export default function Diydelight() {
       let meal = filterForMeal(e.target.dataset.id, mealGroup);
       // data.filter((content) => content.strMeal === e.target.dataset.id);
       let specificMeal = await getSpecificRecipe(meal[0].idMeal);
-      console.log(specificMeal);
-      console.log(meal);
       // Make page disappear, display loader
 
       animateBrowseViewSwitchToSingleRecipe(specificMeal);
@@ -970,7 +1046,6 @@ export default function Diydelight() {
         {cuisine.strArea}
       </Clickable>
     ));
-    console.log(mealCuisines, mealCategories);
     setBrowseClickables([...categoryJSX, ...cuisineJSX]);
   };
 
@@ -984,7 +1059,6 @@ export default function Diydelight() {
       let meal = filterForMeal(e.target.dataset.id, data);
 
       let specificMeal = await getSpecificRecipe(meal[0].idMeal);
-      console.log(specificMeal.data.meals[0]);
 
       // Animate new view onscreen.
       setShowSearchClickables(false);
@@ -1036,7 +1110,6 @@ export default function Diydelight() {
         //   // Generate new view
         //   let meal = filterForMeal(e.target.dataset.id, data);
         //   let specificMeal = await getSpecificRecipe(meal[0].idMeal);
-        //   console.log(specificMeal.data.meals[0]);
         //   // Bring animate new view onscreen.
         //   setShowSearchClickables(false);
         //   setSingleRecipe(specificMeal);
@@ -1094,7 +1167,6 @@ export default function Diydelight() {
             return res;
           })
           .then((res) => {
-            console.log(browseView);
             generateClickables(browseView, res.data.meals, browseViewControls);
             browseViewControls.start("open");
           })
@@ -1131,37 +1203,23 @@ export default function Diydelight() {
     // Gets data for browse component's clickable buttons.
     let categories = (await getMealCategories()).data.meals;
     let cuisines = (await getMealCuisines()).data.meals;
-    console.log(cuisines, categories);
     setMealCategories(categories);
     setMealCuisines(cuisines);
   }, []);
 
   // When browseview changes, clickables must be refiltered and placed in browsecontent
   useEffect(async () => {
-    console.log("browseview change");
     if (mealGroup) {
-      console.log("animating mealgroup into view");
       setLoading(false);
       await loaderAnimControls.start("closed");
       await browseViewControls.start("open");
     } else {
-      console.log(browseView);
-
       if (browseView === "all") {
-        console.log("display all browse clickables");
         setBrowseContent(browseClickables);
       } else {
-        console.log(browseClickables);
-        console.log("display some browse clickables");
         let results = browseClickables.filter((clickable) => {
-          console.log(
-            clickable.props["data-type"],
-            browseView,
-            clickable.props["data-type"] === browseView
-          );
           return clickable.props["data-type"] === browseView;
         });
-        console.log(results);
         setBrowseContent(results);
       }
     }
@@ -1173,7 +1231,7 @@ export default function Diydelight() {
       if (browseClickables.length <= 0) {
         generateBrowseClickables();
       }
-      console.log(browseContent);
+
       await loaderAnimControls.start("closed");
       browseViewControls.start("open");
       await browseViewButtonGridControls.start("open");
@@ -1390,7 +1448,6 @@ export default function Diydelight() {
     await loaderAnimControls.start("open");
     setShowSearchInput(false);
     let result = await getSearchResult(searchTerm);
-    console.log(result);
     if (result.data.meals && result.data.meals !== null) {
       setSearchResults(result.data);
     } else {
@@ -1398,254 +1455,255 @@ export default function Diydelight() {
     }
     await loaderAnimControls.start("closed");
     setShowSearchClickables(true);
-    console.log(searchTerm);
+
     await searchViewResultsControls.start("open");
   };
   return (
-    <Layout>
-      <PageContent>
-        {/* Red Title Lettering */}
-        <AppHeading>DIY Delight</AppHeading>
-        {/* Main Navigation for App */}
-        <AppNav>
-          <AppNavLink
-            thisComponent="random"
-            activeComponent={activeComponent}
-            onClick={async () => {
-              // await closeCurrentView();
-              // resetState();
-              await animateGetNewRandomRecipe();
-            }}
-          >
-            Random Recipe
-          </AppNavLink>
-          |
-          <AppNavLink
-            thisComponent="browse"
-            activeComponent={activeComponent}
-            onClick={() => {
-              loadBrowseView();
-            }}
-          >
-            Browse
-          </AppNavLink>
-          |
-          <AppNavLink
-            thisComponent="search"
-            activeComponent={activeComponent}
-            onClick={() => {
-              loadSearchComponent();
-            }}
-          >
-            Search
-          </AppNavLink>
-        </AppNav>
-        {/* This is where the meat of page content is displayed. Recipes, loaders, and menus are down here.  */}
-        <RecipeContainer>
-          {/* This is the spinner that displays while async operations are in effect. */}
-          <LoaderContainer
-            animate={loaderAnimControls}
-            variants={LoaderVariants}
-            exit="exit"
-            key="LoaderContainer"
-          >
-            <Loader />
-          </LoaderContainer>
-          {/* Logic below determines which app view to provide the user. Random, Browse, Search, or Single Recipe view */}
-          {activeComponent === "random" && recipeData
-            ? getRecipeView(false, false, recipeViewControls)
-            : null}
-          {activeComponent === "browse" ? (
-            <>
-              <AnimatePresence>
-                <BrowseContainer
-                  animate={browseViewControls}
-                  initial="closed"
-                  variants={variants}
-                  exit="exit"
-                  key="browseContainer"
-                >
-                  {mealGroup ? (
-                    mealGroupBackButton
-                  ) : (
-                    <BrowseTabs>
-                      <Button
-                        bgColor={"#FC7419"}
-                        color={"#FFE9E9"}
-                        padding={".5rem 1rem"}
-                        clickHandler={async () => {
-                          await browseViewButtonGridControls.start("closed");
-                          setBrowseView("all");
-                          await browseViewButtonGridControls.start("open");
-                        }}
-                      >
-                        All
-                      </Button>
-                      <CategoryButton
-                        bgColor={"#FC7419"}
-                        color={"#FFE9E9"}
-                        padding={".5rem 1rem"}
-                        clickHandler={async () => {
-                          await browseViewButtonGridControls.start("closed");
-                          setBrowseView("category");
-                          await browseViewButtonGridControls.start("open");
-                        }}
-                        active={browseView}
-                      >
-                        Category
-                      </CategoryButton>
-                      <CuisineButton
-                        bgColor={"#FC7419"}
-                        color={"#FFE9E9"}
-                        padding={".5rem 1rem"}
-                        clickHandler={async () => {
-                          await browseViewButtonGridControls.start("closed");
-                          setBrowseView("cuisine");
-                          await browseViewButtonGridControls.start("open");
-                        }}
-                        active={browseView}
-                      >
-                        Cuisine
-                      </CuisineButton>
-                      {/* 'Clickables' are either categories, cuisines, or specific recipe names. The corresponding data will be loaded when a clickable is clicked. */}
-                    </BrowseTabs>
-                  )}
-                  <AnimateGrid
-                    animate={browseViewButtonGridControls}
-                    initial={"closed"}
-                    variants={gridVariants}
-                    exit={"exit"}
-                    key="clickableGrid"
+    <ErrorBoundary>
+      <Layout>
+        <PageContent>
+          {/* Title Lettering */}
+          <AppHeading>DIY Delight</AppHeading>
+          {/* Main Navigation for App */}
+          <AppNav>
+            <AppNavLink
+              thisComponent="random"
+              activeComponent={activeComponent}
+              onClick={async () => {
+                // await closeCurrentView();
+                // resetState();
+                await animateGetNewRandomRecipe();
+              }}
+            >
+              Random Recipe
+            </AppNavLink>
+            |
+            <AppNavLink
+              thisComponent="browse"
+              activeComponent={activeComponent}
+              onClick={() => {
+                loadBrowseView();
+              }}
+            >
+              Browse
+            </AppNavLink>
+            |
+            <AppNavLink
+              thisComponent="search"
+              activeComponent={activeComponent}
+              onClick={() => {
+                loadSearchComponent();
+              }}
+            >
+              Search
+            </AppNavLink>
+          </AppNav>
+          {/* This is where the meat of page content is displayed. Recipes, loaders, and menus are down here.  */}
+          <RecipeContainer>
+            {/* This is the spinner that displays while async operations are in effect. */}
+            <LoaderContainer
+              animate={loaderAnimControls}
+              variants={LoaderVariants}
+              exit="exit"
+              key="LoaderContainer"
+            >
+              <Loader />
+            </LoaderContainer>
+            {/* Logic below determines which app view to provide the user. Random, Browse, Search, or Single Recipe view */}
+            {activeComponent === "random" && recipeData
+              ? getRecipeView(false, false, recipeViewControls)
+              : null}
+            {activeComponent === "browse" ? (
+              <>
+                <AnimatePresence>
+                  <BrowseContainer
+                    animate={browseViewControls}
+                    initial="closed"
+                    variants={variants}
+                    exit="exit"
+                    key="browseContainer"
                   >
-                    <ClickableGrid>{browseContent}</ClickableGrid>
-                  </AnimateGrid>
-                </BrowseContainer>
+                    {mealGroup ? (
+                      mealGroupBackButton
+                    ) : (
+                      <BrowseTabs>
+                        <Button
+                          bgColor={"#FC7419"}
+                          color={"#FFE9E9"}
+                          padding={".5rem 1rem"}
+                          clickHandler={async () => {
+                            await browseViewButtonGridControls.start("closed");
+                            setBrowseView("all");
+                            await browseViewButtonGridControls.start("open");
+                          }}
+                        >
+                          All
+                        </Button>
+                        <CategoryButton
+                          bgColor={"#FC7419"}
+                          color={"#FFE9E9"}
+                          padding={".5rem 1rem"}
+                          clickHandler={async () => {
+                            await browseViewButtonGridControls.start("closed");
+                            setBrowseView("category");
+                            await browseViewButtonGridControls.start("open");
+                          }}
+                          active={browseView}
+                        >
+                          Category
+                        </CategoryButton>
+                        <CuisineButton
+                          bgColor={"#FC7419"}
+                          color={"#FFE9E9"}
+                          padding={".5rem 1rem"}
+                          clickHandler={async () => {
+                            await browseViewButtonGridControls.start("closed");
+                            setBrowseView("cuisine");
+                            await browseViewButtonGridControls.start("open");
+                          }}
+                          active={browseView}
+                        >
+                          Cuisine
+                        </CuisineButton>
+                        {/* 'Clickables' are either categories, cuisines, or specific recipe names. The corresponding data will be loaded when a clickable is clicked. */}
+                      </BrowseTabs>
+                    )}
+                    <AnimateGrid
+                      animate={browseViewButtonGridControls}
+                      initial={"closed"}
+                      variants={gridVariants}
+                      exit={"exit"}
+                      key="clickableGrid"
+                    >
+                      <ClickableGrid>{browseContent}</ClickableGrid>
+                    </AnimateGrid>
+                  </BrowseContainer>
 
-                {showBrowseRecipe
-                  ? getRecipeView(
-                      true,
-                      async () => {
-                        // MOVING AWAY FROM 'loadSequence' FUNCTION
-                        // loadSequence(
-                        //   () => {
-                        await browseRecipeViewController.start("closed");
-                        setSingleRecipe(false);
-                        setShowBrowseRecipe(false);
-                        setBrowseView("mealGroup");
-                        displayMealGroup();
-                        //   },
-                        //   false,
-                        //   false
-                        // );
-                      },
-                      browseRecipeViewController
-                    )
-                  : null}
-              </AnimatePresence>
-            </>
-          ) : null}
-          {activeComponent === "search" ? (
-            // <AnimatePresence>
-            <>
-              {showSearchInput ? (
-                <SearchContainer
-                  animate={searchViewControls}
+                  {showBrowseRecipe
+                    ? getRecipeView(
+                        true,
+                        async () => {
+                          // MOVING AWAY FROM 'loadSequence' FUNCTION
+                          // loadSequence(
+                          //   () => {
+                          await browseRecipeViewController.start("closed");
+                          setSingleRecipe(false);
+                          setShowBrowseRecipe(false);
+                          setBrowseView("mealGroup");
+                          displayMealGroup();
+                          //   },
+                          //   false,
+                          //   false
+                          // );
+                        },
+                        browseRecipeViewController
+                      )
+                    : null}
+                </AnimatePresence>
+              </>
+            ) : null}
+            {activeComponent === "search" ? (
+              // <AnimatePresence>
+              <>
+                {showSearchInput ? (
+                  <SearchContainer
+                    animate={searchViewControls}
+                    initial="closed"
+                    variants={variants}
+                    exit="exit"
+                    key="searchContainer"
+                  >
+                    <SearchHeading>
+                      Enter the name of a dish to search the database for a
+                      recipe.
+                    </SearchHeading>
+                    <SearchBox>
+                      <SearchInput
+                        ref={searchInputRef}
+                        onChange={(event) => {
+                          setSearchTerm(event.target.value);
+                        }}
+                        type="text"
+                        onKeyDown={async (e) => {
+                          if (e.key === "Enter") {
+                            handleSearch();
+                          }
+                        }}
+                      />
+                      <Button
+                        bgColor="#FC7419"
+                        color="#FFE9E9"
+                        marginRight="auto"
+                        marginLeft="auto"
+                        marginTop="1rem"
+                        padding="1rem 2rem"
+                        clickHandler={async () => {
+                          handleSearch();
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    </SearchBox>
+                  </SearchContainer>
+                ) : null}
+
+                <SearchResultsDisplay
+                  animate={searchViewResultsControls}
+                  exit="exit"
                   initial="closed"
                   variants={variants}
-                  exit="exit"
-                  key="searchContainer"
+                  key="SearchResultsDisplay"
                 >
-                  <SearchHeading>
-                    Enter the name of a dish to search the database for a
-                    recipe.
-                  </SearchHeading>
-                  <SearchBox>
-                    <SearchInput
-                      ref={searchInputRef}
-                      onChange={(event) => {
-                        setSearchTerm(event.target.value);
-                      }}
-                      type="text"
-                      onKeyDown={async (e) => {
-                        if (e.key === "Enter") {
-                          handleSearch();
-                        }
-                      }}
-                    />
-                    <Button
-                      bgColor="#FC7419"
-                      color="#FFE9E9"
-                      marginRight="auto"
-                      marginLeft="auto"
-                      marginTop="1rem"
-                      padding="1rem 2rem"
-                      clickHandler={async () => {
-                        handleSearch();
+                  <SearchResultsHeading>
+                    <SearchHeadingText>
+                      {searchResults ? (
+                        <>
+                          <RedText>{searchResults.meals.length} </RedText>{" "}
+                          results found for <RedText>'{searchTerm}'</RedText>
+                        </>
+                      ) : null}
+                    </SearchHeadingText>
+                    <SearchReturn
+                      onClick={() => {
+                        const node = searchInputRef.current;
+                        // MOVING AWAY FROM 'loadSequence' FUNCTION
+                        loadSequence(
+                          async () => {
+                            await searchViewResultsControls.start("closed");
+                            loadSearchComponent();
+
+                            await searchViewControls.start("open");
+                          },
+                          false,
+                          false
+                        );
                       }}
                     >
-                      Submit
-                    </Button>
-                  </SearchBox>
-                </SearchContainer>
-              ) : null}
+                      <SearchBackArrow size={35} /> Go Back
+                    </SearchReturn>
+                  </SearchResultsHeading>
+                  <ClickableGrid>
+                    {searchResults ? searchClickables : ""}
+                  </ClickableGrid>
+                </SearchResultsDisplay>
+                {getRecipeView(
+                  true,
+                  async () => {
+                    await searchViewSingleRecipeController.start("closed");
+                    setSingleRecipe(false);
+                    generateSearchClickables(searchResults.meals);
+                    setShowSearchClickables(true);
+                    await searchViewResultsControls.start("open");
 
-              <SearchResultsDisplay
-                animate={searchViewResultsControls}
-                exit="exit"
-                initial="closed"
-                variants={variants}
-                key="SearchResultsDisplay"
-              >
-                <SearchResultsHeading>
-                  <SearchHeadingText>
-                    {searchResults ? (
-                      <>
-                        <RedText>{searchResults.meals.length} </RedText> results
-                        found for <RedText>'{searchTerm}'</RedText>
-                      </>
-                    ) : null}
-                  </SearchHeadingText>
-                  <SearchReturn
-                    onClick={() => {
-                      const node = searchInputRef.current;
-                      // MOVING AWAY FROM 'loadSequence' FUNCTION
-                      loadSequence(
-                        async () => {
-                          console.log("Hot refresh works");
-                          await searchViewResultsControls.start("closed");
-                          loadSearchComponent();
-
-                          await searchViewControls.start("open");
-                        },
-                        false,
-                        false
-                      );
-                    }}
-                  >
-                    <SearchBackArrow size={35} /> Go Back
-                  </SearchReturn>
-                </SearchResultsHeading>
-                <ClickableGrid>
-                  {searchResults ? searchClickables : ""}
-                </ClickableGrid>
-              </SearchResultsDisplay>
-              {getRecipeView(
-                true,
-                async () => {
-                  await searchViewSingleRecipeController.start("closed");
-                  setSingleRecipe(false);
-                  generateSearchClickables(searchResults.meals);
-                  setShowSearchClickables(true);
-                  await searchViewResultsControls.start("open");
-
-                  // setRecipeData(specificMeal.data.meals[0]);
-                },
-                searchViewSingleRecipeController
-              )}
-            </>
-          ) : null}
-        </RecipeContainer>
-      </PageContent>
-    </Layout>
+                    // setRecipeData(specificMeal.data.meals[0]);
+                  },
+                  searchViewSingleRecipeController
+                )}
+              </>
+            ) : null}
+          </RecipeContainer>
+        </PageContent>
+      </Layout>
+    </ErrorBoundary>
   );
 }

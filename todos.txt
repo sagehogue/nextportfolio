@@ -39,21 +39,13 @@ DIYDELIGHT
 ***Major***
 
 
-1. Search feature yet to be fully implemented.
-    a. Couple animations have not been implemented ('go back' for recipe and results views)
-    b. If you check out a recipe, you should be able to press "back" and have the search results presented again without having to make a second
-    search.
-   
-    h. Go Back button does not function. 
-
-    j. If there are too many search results, you can't scroll down and view the offscreen clickables! ahh!
-
-
 2. Ipad screen size is broken for recipe view [unknown if still true]
 
 3. No Error handling!!!!!!!!!!
 
 4. No support for clickables extending beyond viewport.
+
+5. Search single recipe view image flickers and loads onscreen. I should re-implement in the way I did for the initial page load, as it does not flicker there.
 
 ***Minor***
 1. When a new recipe is fetched, the image does not change before the new recipe is displayed, and so there is a visable flash on screen. 
@@ -78,14 +70,19 @@ DIYDELIGHT
     b. Go Back button is not fully implemented and breaks the app when clicked. Also I don't think browse state is fully cleared when navigating to other parts of the app.
     I should create a function to clear state as desired and utilize it whenever state is changed through navigation. 
     c. Browse component does not load if you attempt to load it twice without refreshing. Stale state likely culprit.
+    
 
 2. Search bugs
- c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
-    text in it. All I need to do is clear the input box when the user leaves the component.
+    b. If you check out a recipe, you should be able to press "back" and have the search results presented again without having to make a second
+    search.
+    c. If you press 'new random recipe' from recipe screen you got through search, if you return to search, the input box will have some broken
     d. Animation is broken if you go from a searched recipe to the search main screen again. exit and enter animations occur simultaneously.
     e. Search Term not displayed for some reason
     f. Clicking 'New Random Recipe' does not trigger animations properly. 
     g. animateBrowseViewSwitchToSingleRecipe might be causing some sequencing inaccuracy
+    h. Go Back button does not function. 
+    j. If there are too many search results, you can't scroll down and view the offscreen clickables! ahh!
+    text in it. All I need to do is clear the input box when the user leaves the component.
 
 3. Animations should be fully implemented.
     a. There is no exit/enter animation when switching between major components. 
